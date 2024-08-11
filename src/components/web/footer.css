@@ -1,0 +1,130 @@
+:root {
+    --footer-background: #293191;
+    --footer-text-color: #fff;
+    --footer-link-color: #007bff;
+    --footer-link-hover: #0056b3;
+    --footer-border: #444;
+    --button-background: #007bff; /* Button background color */
+    --button-background-hover: #0056b3; /* Button hover background color */
+    --button-text-color: #fff; /* Button text color */
+    --button-border-radius: 5px; /* Button border radius */
+}
+
+.footer {
+    background-color: var(--footer-background);
+    color: var(--footer-text-color);
+    padding: 2rem 1rem;
+    border-top: 1px solid var(--footer-border);
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 200px;
+    margin: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .footer-section h4 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .footer-social {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .footer-social a {
+    display: flex;
+    align-items: center;
+  }
+  
+  .social-icon {
+    height: 24px;
+    width: 24px;
+  }
+  
+  .footer-logo {
+    margin-top: 1rem;
+  }
+  
+  .flypool-logo {
+    height: 40px; /* Adjust as needed */
+    width: auto;
+  }
+  
+
+.footer-section p, .footer-section a {
+    color: var(--footer-text-color);
+    text-decoration: none;
+}
+
+.footer-section a {
+    color: var(--footer-link-color);
+}
+
+.footer-section a:hover {
+    color: var(--footer-link-hover);
+}
+
+.footer-social {
+    display: flex;
+    gap: 1rem;
+}
+
+.footer-social a {
+    color: var(--footer-link-color);
+    text-decoration: none;
+}
+
+.footer-social a:hover {
+    color: var(--footer-link-hover);
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.footer-bottom p {
+    margin: 0;
+    font-size: 0.8rem;
+}
+.footer-section p {
+    color: var(--footer-text-color);
+    text-decoration: none;
+    font-size: 0.7rem; /* Decrease the font size */
+  }
+  
+
+/* Button styles */
+.footer-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #55a4a3; /* Button background color */
+    color: var(--button-text-color); /* Button text color */
+    border: none;
+    border-radius: var(--button-border-radius); /* Button border radius */
+    text-align: center;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.footer-button:hover {
+    background-color: var(--button-background-hover); /* Button hover background color */
+}
