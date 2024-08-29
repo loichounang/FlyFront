@@ -1,0 +1,70 @@
+.bootstrap-cards {
+    min-height: 150px;
+    border: none;
+    text-align: left;
+    color: white;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 5px 4px 20px 5px rgba(0, 0, 0, 0.3); /* Ombre légère pour donner de la profondeur */
+    animation: gradientBackground 10s ease infinite;
+    background-size: "400% 400%";
+    border-radius: "10px"; /* Ajustement pour des coins arrondis */ /* Exemple pour une carte Utilisateurs */
+  
+    .bootstrap-cards-headers {
+      border: none;
+      font-size: 1.35em;
+    }
+
+    .card-icon-right{
+        float: right;
+    }
+  
+    .card-content {
+        font-size: 2.5em;
+        animation: fadeInUp 0.5s ease-in-out;
+    }
+  
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes gradientBackground {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+  
+
+/* Actions Card Styles */
+.actions-card{
+  ul{
+    width: 100%;
+  }
+  
+  ul .list-element{
+    margin: 5px;
+    padding: 15px;
+    text-align: left;
+    margin-left: -30px;
+  }
+  li:hover{
+    background: dimgray;
+  }
+}

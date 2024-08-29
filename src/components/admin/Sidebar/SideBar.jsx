@@ -1,47 +1,65 @@
 import React, { useState } from 'react';
-import { ListGroup, Nav, NavDropdown } from 'react-bootstrap';
-import { Dashboard, TrendingUp, Settings, HelpOutline } from '@mui/icons-material';
-import './Sidebar.css'; // Import des styles personnalisés
+import { Nav } from 'react-bootstrap';
+import { Link } from "react-router-dom";
+import { ListItem, ListItemIcon, ListItemText, IconButton} from '@mui/material';
+import { Dashboard, People, Forum, BarChart, Notifications, Folder, Menu} from '@mui/icons-material';
+import './Sidebar.css';  // Pour les styles
 
 const Sidebar = () => {
-  const [open, setOpen] = useState('');
+  const [isOpen, setIsOpen] = useState(true);
 
-  const handleToggle = (menu) => {
-    setOpen(open === menu ? '' : menu);
-  };
+    const toggleSidebar = () => {
+        setIsOpen(!isOpen);
+    };
 
   return (
     <div className="sidebar">
-      <Nav className="flex-column">
-        <Nav.Link href="#" className="nav-item">
-          <Dashboard className="nav-icon" />
-          Dashboard
-        </Nav.Link>
-        <NavDropdown
-          title={
-            <>
-              <TrendingUp className="nav-icon" />
-              Formations
-            </>
-          }
-          id="analytics-dropdown"
-          className="nav-item"
-          show={open === 'analytics'}
-          onClick={() => handleToggle('analytics')}
-        >
-          <NavDropdown.Item href="#">
-            <ListGroup className="nav-icon" />
-            Leçons
-          </NavDropdown.Item>
-          <NavDropdown.Item href="#">
-            <Settings className="nav-icon" />
-            Settings
-          </NavDropdown.Item>
-        </NavDropdown>
-        <Nav.Link href="#" className="nav-item">
-          <HelpOutline className="nav-icon" />
-          Help
-        </Nav.Link>
+      <IconButton
+                className={`sidebar-button ${isOpen ? 'active' : ''}`}
+                onClick={toggleSidebar}
+            >
+                <Menu />
+            </IconButton>
+            <div className={`sidebar ${isOpen ? '' : 'sidebar-hidden'}`}>
+                {/* Contenu de la sidebar */}
+            </div>
+      <Nav defaultActiveKey="/dashboard" className="flex-column">
+        <ListItem button component={Link} to="/admin/dashboard">
+          <ListItemIcon>
+            <Dashboard />
+          </ListItemIcon>
+          <ListItemText primary="Dashboard"  />
+        </ListItem>
+        <ListItem button component={Link} to="/admin/users">
+          <ListItemIcon>
+            <People />
+          </ListItemIcon>
+          <ListItemText primary="Utilisateurs" />
+        </ListItem>
+        <ListItem button component={Link} to="/admin/courses">
+          <ListItemIcon>
+            <Folder />
+          </ListItemIcon>
+          <ListItemText primary="Cours" />
+        </ListItem>
+        <ListItem button component={Link} to="/admin/forum">
+          <ListItemIcon>
+            <Forum />
+          </ListItemIcon>
+          <ListItemText primary="Forum" />
+        </ListItem>
+        <ListItem button component={Link} to="/admin/statistics">
+          <ListItemIcon>
+            <BarChart />
+          </ListItemIcon>
+          <ListItemText primary="Statistiques" />
+        </ListItem>
+        <ListItem button component={Link} to="/admin/notifications">
+          <ListItemIcon>
+            <Notifications />
+          </ListItemIcon>
+          <ListItemText primary="Notifications" />
+        </ListItem>
       </Nav>
     </div>
   );

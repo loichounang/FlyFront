@@ -1,0 +1,45 @@
+.alert-card {
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+
+    .alert-card-header {
+        background-color: #dc3545;
+        color: white;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .alert-item {
+        padding: 10px;
+        transition: background-color 0.3s ease;
+    }
+    
+    .alert-low {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    
+    .alert-medium {
+        background-color: #ffeeba;
+        color: #856404;
+    }
+    
+    .alert-high {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    
+    .no-alerts {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+}
+
+.alert-card:hover {
+    transform: translateY(-5px);
+}

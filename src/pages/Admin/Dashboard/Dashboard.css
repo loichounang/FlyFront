@@ -1,0 +1,13 @@
+.col{
+    margin: 10px auto;
+}
+
+.first-section{
+    .first-line{
+        margin-top: 1rem;
+    }
+    .second-line{
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+}

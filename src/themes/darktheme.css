@@ -1,0 +1,21 @@
+.darkTheme{
+    --sidebar-bg: linear-gradient(135deg, #0a0a0a 25%, #1c1c1c 75%);
+    --sidebar-color: white;
+    --navbar-bg: linear-gradient(135deg, #0a0a0a 25%, #1c1c1c 75%);
+    --navbar-color: white;
+    --content-bg: rgba(0,0,0,0.8);
+    /* Couleur du bouton du choix du thème */
+    --theme-button-color: dimgray;
+
+    /* Couleur de l'arrière plan du choix du thème */
+    --theme-background: black;
+
+    /* Couleur de l'arrière plan du choix du thème au survol de la souris */
+    --theme-background-onHover: gainsboro;
+
+    /* Couleur du texte du choix du thème au survol de la souris */
+    --theme-background-onHover-text-color: white;
+
+    /* Couleur du texte des différentes parties dans le conteneur principal */
+    --content-title-text-color: White;
+}

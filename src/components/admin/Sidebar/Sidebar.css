@@ -1,47 +1,60 @@
 /* Sidebar.css */
 .sidebar {
-  height: 100vh;
   width: 250px;
-  background-color: #333; /* Couleur d'arrière-plan unique */
-  position: fixed;
-  top: 0;
-  left: 0;
-  padding-top: 20px;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
+  background: var(--sidebar-bg);
+  height: 100vh;
+  padding: 15px;
+  color: var(--sidebar-color);
+  position: relative;
+  overflow: hidden;
 }
 
-.sidebar .nav-link {
-  display: flex;
-  align-items: center;
-  color: #fff;
-  padding: 10px 20px;
-  transition: background-color 0.3s ease;
-  text-decoration: none;
+.sidebar .MuiListItem-root {
+  margin: 10px 0;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.sidebar .nav-link:hover {
-  background-color: #555; /* Couleur de survol */
+.sidebar .MuiListItem-root:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(10px);
 }
 
-.sidebar .nav-item.active .nav-link {
-  background-color: #444; /* Couleur d'onglet sélectionné */
+.sidebar .MuiListItem-root.Mui-selected {
+  background: rgba(255, 255, 255, 0.2);
+  border-left: 4px solid #00b4d8;
 }
 
-.sidebar .nav-icon {
-  margin-right: 10px;
-  color: #fff; /* Couleur des icônes */
+.sidebar .MuiListItem-root .MuiListItemIcon-root {
+  color: white;
 }
 
-.nav-dropdown-menu {
-  background-color: #333; /* Couleur de fond des sous-menus */
+.sidebar .MuiListItem-root.Mui-selected .MuiListItemIcon-root {
+  color: #00b4d8;
 }
 
-.nav-dropdown-menu .nav-link {
-  padding-left: 40px; /* Indentation des éléments de sous-menu */
+/* Animated background */
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 10%, transparent 70%);
+  animation: rotate 15s linear infinite;
+  z-index: 0;
 }
 
-.nav-dropdown-menu .nav-icon {
-  margin-right: 10px;
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sidebar .flex-column {
+  position: relative;
+  z-index: 1;
 }

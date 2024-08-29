@@ -1,96 +1,84 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Avatar, InputBase, Box } from '@mui/material';
-import SettingsIcon from '@mui/icons-material/Settings';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import SearchIcon from '@mui/icons-material/Search';
-import logo from "../../../assets/images/logo.png";
-import "./Navbar.css";
-import { alpha, styled } from '@mui/material/styles';
-//import { white, blue, lightBlue } from "@mui/material/colors";
+import React, { useState } from 'react';
+import { AppBar, Toolbar, IconButton, Avatar, Menu, MenuItem } from '@mui/material';
+import { InputBase } from '@mui/material';
+import { Search as SearchIcon, Settings} from '@mui/icons-material';
+import './Navbar.css';  // Pour les styles
+import ThemeSwitcher from '../../../config/ThemeSwitcher';
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.black, 0.05),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.black, 0.1),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto',
-  },
-}));
+const DashboardNavbar = ({ theme, toggleTheme }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: '20ch',
-      '&:focus': {
-        width: '30ch',
-      },
-    },
-  },
-}));
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
-const Navbar = () => {
+  const handleSearchChange = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+
+    // Logique pour effectuer la recherche automatique
+    if (query) {
+      console.log('Recherche automatique pour : ', query);
+      // Appelle une fonction pour effectuer la recherche ou filtrer les résultats ici
+    }
+  };
+
   return (
-    <AppBar position="static" color="default" className="dashboard-header">
-      <Toolbar className="d-flex justify-content-between">
-        {/* Logo et Titre */}
-        <Box className="d-flex align-items-center">
-          <img src={logo} alt="Logo" height="40" className="me-2" />
-        </Box>
-
-        {/* Barre de Recherche */}
-        <Search>
-          <SearchIconWrapper>
+    <AppBar position="static" className="navbar-custom">
+      <Toolbar className="toolbar-custom">
+        <div className="search-container">
+          <div className="search-icon">
             <SearchIcon />
-          </SearchIconWrapper>
-          <StyledInputBase
+          </div>
+          <InputBase
             placeholder="Rechercher..."
+            classes={{
+              root: 'inputRoot',
+              input: 'inputInput',
+            }}
             inputProps={{ 'aria-label': 'search' }}
+            value={searchQuery}
+            onChange={handleSearchChange}
           />
-        </Search>
-
-        {/* Icônes et Profil Utilisateur */}
-        <Box className="header-icons d-flex align-items-center">
-          <IconButton color="primary">
-            <NotificationsIcon />
+        </div>
+        
+        <div className="profile-section">
+          <ThemeSwitcher 
+            styles={{
+              float: "right",
+              position: "relative",
+              right: "0",
+            }}
+          />
+          <IconButton onClick={toggleTheme} color="inherit">
+            <Settings/>
           </IconButton>
-          <IconButton color="primary">
-            <Brightness4Icon />
+          <IconButton edge="end" onClick={handleProfileMenuOpen} color="inherit">
+            <Avatar alt="User Avatar" src="/static/images/avatar/1.jpg" />
           </IconButton>
-          <IconButton color="primary">
-            <SettingsIcon />
-          </IconButton>
-          {/* User Menu */}
-          <Box className="user-menu d-flex align-items-center ms-2">
-            <Avatar alt="User Avatar" src="path/to/user-avatar.jpg" />
-            <Typography className="user-name ms-2">Administrateur</Typography>
-          </Box>
-        </Box>
+          
+        </div>
+        
+        <Menu
+          anchorEl={anchorEl}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          keepMounted
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+          <MenuItem onClick={handleMenuClose}>Mon compte</MenuItem>
+          <MenuItem onClick={handleMenuClose}>Déconnexion</MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   );
 };
 
-export default Navbar;
+export default DashboardNavbar;

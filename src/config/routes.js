@@ -1,4 +1,5 @@
-import { Dashboard, HomePage, ForumPage, CoursesPage, CategoriesPage } from "../pages";
+import { HomePage, ForumPage, CoursesPage, CategoriesPage } from "../pages";
+import { Dashboard, UsersAdminPage, CoursAdminPage } from "../pages";
 
 const routes = [
     {
@@ -6,6 +7,17 @@ const routes = [
         component: Dashboard,
         layout: 'admin',
     },
+    {
+        path: '/admin/users',
+        component: UsersAdminPage,
+        layout: 'admin',
+    },
+    {
+        path: '/admin/courses',
+        component: CoursAdminPage,
+        layout: 'admin',
+    },
+    
     {
         path: '/',
         component: HomePage,

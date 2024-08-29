@@ -5,7 +5,6 @@
 
 .sidebar {
     width: 250px; /* Largeur de la sidebar */
-    background-color: #f4f6f8;
     position: fixed;
     top: 0;
     left: 0;
@@ -21,10 +20,70 @@
 
 .main-content {
     padding: 20px;
+    background: var(--content-bg);
+    overflow-y: hidden;
+    color: var(--text-color);
 }
 
-.navbar {
-    background-color: #ffffff;
-    border-bottom: 1px solid #ddd;
-    padding: 10px;
+a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+}
+    
+/* Responsive styles */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+        overflow: hidden;
+    }
+
+    .content-wrapper {
+        margin-left: 0;
+    }
+
+    .sidebar-button {
+        display: block;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+    }
+
+    .sidebar-button.active + .sidebar {
+        width: 250px;
+    }
+
+    .sidebar-icons-only .sidebar-item-text {
+        display: none;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .sidebar-icons-only .sidebar-item-text {
+        display: none;
+    }
+
+}
+
+@media (min-width: 1025px) {
+    .sidebar {
+        width: 250px;
+    }
+
+    .sidebar-item-text {
+        display: block;
+    }
+
+    .sidebar-icons-only .sidebar-item-text {
+        display: block;
+    }
 }

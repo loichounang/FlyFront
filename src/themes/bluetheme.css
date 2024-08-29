@@ -1,0 +1,34 @@
+.blueTheme {
+    /* Dégradé d'arrière-plan de la sidebar */
+    --sidebar-bg: linear-gradient(135deg, slateblue 25%, darkslateblue 75%);
+    
+    /* Couleur du texte de la sidebar */
+    --sidebar-color: white; /* Un gris foncé pour une bonne lisibilité sur fond clair */
+    
+    /* Dégradé d'arrière-plan de la navbar */
+    --navbar-bg: linear-gradient(135deg, dodgerblue 25%, darkblue 75%);
+
+    /* Couleur des icones de la navbar */
+    --navbar-icon: white;
+    
+    /* Couleur du texte de la navbar */
+    --navbar-color: #3e3a3a; /* Un gris foncé pour une bonne lisibilité sur fond clair */
+    
+    /* Couleur de fond de la fenêtre de contenu */
+    --content-bg: linear-gradient(178deg, darkslateblue 105%, slateblue 25%); /* Une couleur légèrement grise pour adoucir le blanc pur */
+
+    /* Couleur du bouton du choix du thème */
+    --theme-button-color: darkslateblue;
+
+    /* Couleur de l'arrière plan du choix du thème */
+    --theme-background: blue;
+
+    /* Couleur de l'arrière plan du choix du thème au survol de la souris */
+    --theme-background-onHover: slateblue;
+
+    /* Couleur du texte du choix du thème au survol de la souris */
+    --theme-background-onHover-text-color: white;
+
+    /* Couleur du texte des différentes parties dans le conteneur principal */
+    --content-title-text-color: White;
+}
