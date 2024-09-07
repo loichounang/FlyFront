@@ -15,15 +15,14 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <IconButton
-                className={`sidebar-button ${isOpen ? 'active' : ''}`}
-                onClick={toggleSidebar}
-            >
-                <Menu />
-            </IconButton>
-            <div className={`sidebar ${isOpen ? '' : 'sidebar-hidden'}`}>
+        className={`sidebar-button ${isOpen ? 'active' : ''}`}
+        onClick={toggleSidebar}
+      >
+        <Menu />
+      </IconButton>
+      <div className={`sidebar ${isOpen ? '' : 'sidebar-hidden'}`}>
                 {/* Contenu de la sidebar */}
-            </div>
-      <Nav defaultActiveKey="/dashboard" className="flex-column">
+                <Nav defaultActiveKey="/dashboard" className="flex-column">
         <ListItem button component={Link} to="/admin/dashboard">
           <ListItemIcon>
             <Dashboard />
@@ -61,6 +60,7 @@ const Sidebar = () => {
           <ListItemText primary="Notifications" />
         </ListItem>
       </Nav>
+      </div>
     </div>
   );
 };

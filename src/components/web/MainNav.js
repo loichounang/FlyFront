@@ -14,9 +14,11 @@ import {
 import { Search as SearchIcon, Menu as MenuIcon, Person as PersonIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
+import LoginModal from './LoginForm';
 
 const MainNav = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -30,6 +32,15 @@ const MainNav = () => {
     { text: 'Catégories', link: '/mes-catégories' },
     { text: 'Team', link: '#' },
   ];
+
+  // Fonctions pour afficher et cacher le modal
+  function openLogin() {
+    setLoginOpen(true);
+  }
+
+  function closeLogin() {
+    setLoginOpen(false);
+  }
 
   return (
     <AppBar
@@ -73,6 +84,7 @@ const MainNav = () => {
             </Button>
           ))}
           <Button
+            onClick={() => openLogin()}
             variant="contained"
             sx={{
               backgroundColor: '#66bfbe',
@@ -84,6 +96,10 @@ const MainNav = () => {
             Se connecter
           </Button>
         </Box>
+        <LoginModal 
+            show={loginOpen}
+            handleClose={() => closeLogin()}
+          />
 
         {/* Mobile Menu */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center' }}>

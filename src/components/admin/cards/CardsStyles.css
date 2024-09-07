@@ -58,13 +58,17 @@
     width: 100%;
   }
   
-  ul .list-element{
-    margin: 5px;
-    padding: 15px;
+  .list-element {
+    cursor: pointer;
+    padding: 10px;
+    border: none;
+    background: none;
+    color: white;
     text-align: left;
-    margin-left: -30px;
+    transition: background-color 0.3s ease;
   }
-  li:hover{
-    background: dimgray;
+  
+  .list-element:hover {
+    background-color: rgba(255, 255, 255, 0.1);
   }
 }

@@ -31,4 +31,9 @@
 
     /* Couleur du texte des différentes parties dans le conteneur principal */
     --content-title-text-color: White;
+
+    /* Couleur de l'arrière plan du formulaire de création des cours */
+    --courses-form-bg: linear-gradient(135deg, darkblue 25%, dodgerblue 75%);
+
+    --courses-form-color: white;
 }

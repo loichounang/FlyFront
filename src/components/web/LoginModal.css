@@ -1,0 +1,13 @@
+.login-modal #modal-content {
+    border-radius: 16px;
+    display: flex;
+    height: 600px; /* Augmenter la hauteur */
+    max-width: 1000px; /* Augmenter la largeur */
+    margin: auto; /* Centrer le modal */
+}
+
+.modal-content .left-side, 
+.modal-content .right-side {
+    height: 100%;
+    flex: 1;
+}

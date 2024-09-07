@@ -5,8 +5,9 @@ import { UsersList } from "../../../components/admin/lists";
 import { UserDetails } from "../../../components/admin/details";
 import { IconButton } from "@mui/material";
 import { Button } from "react-bootstrap";
-import { Add } from "@mui/icons-material";
+import { Add, } from "@mui/icons-material";
 import { CreateUser } from "../../../components/admin/forms";
+import { DeleteFilled, InfoCircleFilled } from "@ant-design/icons";
 
 const UsersAdminPage = () => {
     const [visible, setVisible] = useState(false);
@@ -19,19 +20,29 @@ const UsersAdminPage = () => {
         setVisible(false);
     };
 
+    function showDetailsModal() {
+        setVisible(true);
+    };
+
+    function hideDetailsModal() {
+        setVisible(false);
+    }
+
     const columns = [
         { title: 'id', dataIndex: 'id', key: 'id' },
-        { title: 'Nom', dataIndex: 'first_name', key: 'first_name' },
-        { title: 'Prénom', dataIndex: 'last_name', key: 'last_name' },
+        { title: 'Nom', dataIndex: 'nom', key: 'nom' },
+        { title: 'Prénom', dataIndex: 'prénom', key: 'prénom' },
         { title: 'Email', dataIndex: 'email', key: 'email' },
         { title: 'Rôle', dataIndex: 'role', key: 'role' },
+        { title: 'Statut', dataIndex: 'statut', key: 'statut' },
+        { title: 'Dernière connexion', dataIndex: 'dernier_accès', key: 'dernier_accès' },
         {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
                 <>
-                    <Button onClick={() => {/* Fonction d'édition */}}>Modifier</Button>
-                    <Button onClick={() => {/* Fonction de suppression */}} danger>Supprimer</Button>
+                    <Button onClick={() => showDetailsModal()} variant="success" size="sm" style={{ margin: "2px"}}><InfoCircleFilled /></Button>
+                    <Button onClick={() => hideDetailsModal()} variant="danger" size="sm" style={{ margin: "2px"}}><DeleteFilled /></Button>
                 </>
             ),
         },
@@ -58,15 +69,15 @@ const UsersAdminPage = () => {
                 </h5>
 
                 <div className="row">
-                    <div className="col-7">
+                    <div className="col">
                         <UsersList 
                             dataColumns={columns}
                         />
                     </div>
-
-                    <div className="col-5">
-                        <UserDetails />
-                    </div>
+                    <UserDetails 
+                        isVisible={visible}
+                        handleClose={() => hideDetailsModal()}
+                    />
                 </div>
             </div>
         </div>

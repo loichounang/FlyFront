@@ -21,9 +21,9 @@ const CoursPage = () => {
     const columns = [
         {title: "ID", dataIndex: "id", key: "id"},
         {title: "Titre", dataIndex: "titre", key: "titre"},
-        {title: "Auteur", dataIndex: "id", key: "id"},
-        {title: "Durée", dataIndex: "id", key: "id"},
-        {title: "Catégorie", dataIndex: "id", key: "id"},
+        {title: "Auteur", dataIndex: "auteur", key: "auteur"},
+        {title: "Durée", dataIndex: "durée", key: "durée"},
+        {title: "Catégorie", dataIndex: "category", key: "category"},
         {
             title: 'Action',
             key: 'action',
@@ -51,6 +51,9 @@ const CoursPage = () => {
                 <CreateCourses 
                     visible={visible}
                     onCancel={() => hideForm()}
+                    contentURL="api/cours/cours/"
+                    contentURL1="api/cours/categories/"
+                    contentURL2={`api/utilisateurs/utilisateurs/${localStorage.getItem("uid")}/get_admins`}
                 />
 
                 <div className="row">

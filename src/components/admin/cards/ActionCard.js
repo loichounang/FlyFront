@@ -2,40 +2,15 @@ import { Card, CardBody, CardTitle } from "react-bootstrap";
 import React, { useState } from "react";
 import "./CardsStyles.css";
 import { CreateCategories, CreateChapters, CreateLessons } from "../forms";
+import { Button } from "@mui/material";
 
 const ActionCard = () => {
-    const [chapterOpen, setChapterOpen] = useState(false);
-    const [lessonOpen, setLessonOpen] = useState(false);
-    const [categoryOpen, setCategoryOpen] = useState(false);
+    const [modals, setModals] = useState({ chapter: false, lesson: false, category: false });
 
-    // Show Modal
-    function showChapterModal() {
-        setChapterOpen(true);
-    }
-    // Hide Modal
-    function hideChapterModal() {
-        setChapterOpen(false);
-    }
+function toggleModal(type) {
+    setModals(prev => ({ ...prev, [type]: !prev[type] }));
+}
 
-    // Show Lessons Modal
-    // Show Modal
-    function showLessonModal() {
-        setLessonOpen(true);
-    }
-    // Hide Modal
-    function hideLessonModal() {
-        setLessonOpen(false);
-    }
-
-    // Show Categories Modal
-    // Show Modal
-    function showCategoryModal() {
-        setCategoryOpen(true);
-    }
-    // Hide Modal
-    function hideCategoryModal() {
-        setCategoryOpen(false);
-    }
 
     return (
         <div className="actions-card">
@@ -45,19 +20,19 @@ const ActionCard = () => {
                 </CardTitle>
                 <CardBody>
                     <ul style={{listStyleType: "none"}}>
-                        <li className="list-element">Voir les détails</li>
-                        <li className="list-element">consulter les participants</li>
-                        <li className="list-element">Afficher les leçons</li>
-                        <li className="list-element">Voir l'auteur</li>
-                        <li className="list-element" onClick={() => showLessonModal()}>Ajouter une leçon</li>
-                        <li className="list-element" onClick={() => showChapterModal()}>Ajouter un chapitre</li>
-                        <li className="list-element" onClick={() => showCategoryModal()}>Ajouter une catégorie</li>
+                        <Button className="list-element">Voir les détails</Button>
+                        <Button className="list-element">consulter les participants</Button>
+                        <Button className="list-element">Afficher les leçons</Button>
+                        <Button className="list-element">Voir l'auteur</Button>
+                        <Button className="list-element" onClick={() => toggleModal('lesson')}><i className="bi bi-plus-circle" style={{marginRight: "10px"}}></i>Ajouter une leçon</Button>
+                        <Button className="list-element" onClick={() => toggleModal('chapter')}><i className="bi bi-plus-circle" style={{marginRight: "10px"}}></i>Ajouter un chapitre</Button>
+                        <Button className="list-element" onClick={() => toggleModal('category')}><i className="bi bi-plus-circle" style={{marginRight: "10px"}}></i>Ajouter une catégorie</Button>
                     </ul>
                 </CardBody>
             </Card>
-            <CreateChapters visible={chapterOpen} onCancel={() => hideChapterModal()}/>
-            <CreateLessons visible={lessonOpen} onCancel={() => hideLessonModal()}/>
-            <CreateCategories visible={categoryOpen} onCancel={() => hideCategoryModal()}/>
+            <CreateChapters visible={modals.chapter} onCancel={() => toggleModal('chapter')}/>
+            <CreateLessons visible={modals.lesson} onCancel={() => toggleModal('lesson')}/>
+            <CreateCategories visible={modals.category} onCancel={() => toggleModal('category')} contentURL="api/cours/categories/" />
         </div> 
     );
 };

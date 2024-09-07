@@ -1,47 +1,156 @@
 import { Modal, Form, Input, Select, InputNumber } from "antd";
 import axios from "axios";
+import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
-import APIBaseURL from "../../../services/ApiServices";
+//import APIBaseURL from "../../../services/ApiServices";
 
 const CreateCoursesForm = ({visible, onCreate, onCancel, contentURL, contentURL1, contentURL2}) => {
 
+    const { enqueueSnackbar } = useSnackbar();
     const [form] = Form.useForm();
     const [errorMessage, setErrorMessage] = useState("");
     const [adminList, setAdminList] = useState([]);
     const [coursesCategories, setCoursesCategories] = useState([]);
 
-    const handleFinish = (values) => {
+    const handleFinish = async (values) => {
         // Appeler une API ou gérer la création des cours ici
-        const post = axios.post("http://" + APIBaseURL + contentURL)
-        onCreate(values);
+        try {
+            const response = await axios.post(`http://127.0.0.1:8000/${contentURL}`);
+            if(response.status >= 200 && response.status <= 300){
+                enqueueSnackbar(response.data.message, {
+                    autoHideDuration: 4000,
+                    variant: "success",
+                });
+            }
+        } catch (error) {
+            switch (error.response?.status) {
+                case 500:
+                    enqueueSnackbar(error.response?.data.detail, {
+                        autoHideDuration: 4000,
+                        variant: "success",
+                    });
+                    break;
+                case 404:
+                    enqueueSnackbar(error.response?.data.detail, {
+                        autoHideDuration: 4000,
+                        variant: "success",
+                    });
+                    break;
+                case 403:
+                    enqueueSnackbar(error.response?.data.detail, {
+                        autoHideDuration: 4000,
+                        variant: "success",
+                    });
+                    break;
+                case 401:
+                    enqueueSnackbar(error.response?.data.detail, {
+                        autoHideDuration: 4000,
+                        variant: "success",
+                    });
+                    break;
+            
+                default:
+                    enqueueSnackbar(error.response?.data.detail || " Une erreur innatendue s'est produite lors de la création du cours", {
+                        autoHideDuration: 4000,
+                        variant: "success",
+                    });
+                    break;
+            }
+        }
         form.resetFields();
     };
 
     //Récupérer la liste des utilisateurs
     useEffect(() => {
-        const data = [
-            {id: 1, first_name: "Akim", last_name: "Julien"},
-            {id: 2, first_name: "Hounang", last_name: "Loïc"},
-            {id: 3, first_name: "Maeva", last_name: "BS"},
-        ]
-        setAdminList(data);
-    }, []);
+        const fetchUsers = async() => {
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/${contentURL2}`);
+                setAdminList(response.data);
+            } catch (error) {
+                switch (error.response?.status) {
+                    case 500:
+                        enqueueSnackbar(error.response?.data.detail, {
+                            autoHideDuration: 4000,
+                            variant: "error",
+                        });
+                        break;
+                    case 404:
+                        enqueueSnackbar(error.response?.data.detail, {
+                            autoHideDuration: 4000,
+                            variant: "error",
+                        });
+                        break;
+                    case 403:
+                        enqueueSnackbar(error.response?.data.detail, {
+                            autoHideDuration: 4000,
+                            variant: "error",
+                        });
+                        break;
+                    case 401:
+                        enqueueSnackbar(error.response?.data.detail, {
+                            autoHideDuration: 4000,
+                            variant: "error",
+                        });
+                        break;
+                
+                    default:
+                        enqueueSnackbar(error.response?.data.detail || " Une erreur innatendue s'est produite lors de la récupération de la liste des utilisateurs", {
+                            autoHideDuration: 4000,
+                            variant: "error",
+                        });
+                        break;
+                    }
+                }
+        };
+
+        fetchUsers();
+    }, [contentURL2, enqueueSnackbar]);
 
     //Récupérer la liste des catégories de cours
     useEffect(() => {
-        const coursesData = [
-            {id: 1, name: "Bases de données"},
-            {id: 2, name: "Analyse"},
-            {id: 3, name: "Developpement Web"},
-            {id: 4, name: "Data Science"},
-            {id: 5, name: "Conception graphique"},
-            {id: 6, name: "Web Thinking"},
-            {id: 7, name: "Web Design"},
-            {id: 8, name: "Prototypage"},
-            {id: 9, name: "Secrétariat"},
-        ]
-        setCoursesCategories(coursesData);
-    }, []);
+        const fetchCategories = async () => {
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/${contentURL1}`);
+                setCoursesCategories(response.data);
+            } catch (error) {
+                switch (error.response?.status) {
+                    case 500:
+                        enqueueSnackbar(error.response?.data.detail, {
+                            autoHideDuration: 4000,
+                            variant: "error",
+                        });
+                        break;
+                    case 404:
+                        enqueueSnackbar(error.response?.data.detail, {
+                            autoHideDuration: 4000,
+                            variant: "error",
+                        });
+                        break;
+                    case 403:
+                        enqueueSnackbar(error.response?.data.detail, {
+                            autoHideDuration: 4000,
+                            variant: "error",
+                        });
+                        break;
+                    case 401:
+                        enqueueSnackbar(error.response?.data.detail, {
+                            autoHideDuration: 4000,
+                            variant: "error",
+                        });
+                        break;
+                
+                    default:
+                        enqueueSnackbar(error.response?.data.detail || " Une erreur innatendue s'est produite lors de la récupération des catégories", {
+                            autoHideDuration: 4000,
+                            variant: "error",
+                        });
+                        break;
+                }
+            }
+        }
+
+        fetchCategories();
+    }, [contentURL1, enqueueSnackbar]);
 
     return (
         <Modal
@@ -53,7 +162,7 @@ const CreateCoursesForm = ({visible, onCreate, onCancel, contentURL, contentURL1
                 onCancel();
                 form.resetFields();
                 setErrorMessage("");
-              }}
+            }}
             onOk={() => {
                 form
                 .validateFields()
@@ -66,7 +175,7 @@ const CreateCoursesForm = ({visible, onCreate, onCancel, contentURL, contentURL1
             styles={{ padding: '0' }}
             centered
         >
-            <div style={{ background: "linear-gradient(135deg, #eabeac 45%, #fceabb 75%)", animation: "gradient 5s ease infinite", padding: "15px"}}>
+            <div style={{ animation: "gradient 5s ease infinite", padding: "15px", color: "var(--courses-form-color)"}}>
                 <Form
                     form={form}
                     layout="horizontal"
@@ -103,7 +212,7 @@ const CreateCoursesForm = ({visible, onCreate, onCancel, contentURL, contentURL1
                         <Select>
                             {adminList.map((user, index) => {
                                 return (
-                                    <option key={index} value={user.id}>{user.first_name} {user.last_name}</option>
+                                    <option key={index} value={user.id}>{user.nom} {user.prénom}</option>
                                 )
                             })}
                         </Select>

@@ -24,7 +24,7 @@ const CreateUserModal = ({ visible, onCreate, onCancel, theme, contentURL }) => 
           setTeamList(teamsResponse.data);
         }
       } catch (error) {
-        switch (error?.response.status) {
+        switch (error.response?.status) {
           case 500:
             setErrorMessage("Erreur interne du serveur lors de la récupération de la liste des équipes");
             break;
@@ -42,7 +42,7 @@ const CreateUserModal = ({ visible, onCreate, onCancel, theme, contentURL }) => 
     }
 
     FetchTeams();
-  }, []);
+  }, [contentURL]);
 
   return (
     <Modal

@@ -25,7 +25,8 @@ const Dashboard = () => {
                     {/** Première section -> première ligne */}
                     <div className="row first-line">
                         <div className="col sm-12 md-3 lg-3 xl-3">
-                            <BootstrapCard 
+                            <BootstrapCard
+                                contentURL="api/utilisateurs/utilisateurs"
                                 title = "Utilisateurs"
                                 icon={<People />}
                                 styles={{
@@ -35,7 +36,8 @@ const Dashboard = () => {
                         </div>
 
                         <div className="col sm-12 md-3 lg-3 xl-3">
-                            <BootstrapCard 
+                            <BootstrapCard
+                                contentURL="api/cours/cours/tous-les-cours-commences"
                                 title = "Cours Actifs"
                                 icon={<Folder />}
                                 styles={{
@@ -45,7 +47,8 @@ const Dashboard = () => {
                         </div>
 
                         <div className="col sm-12 md-3 lg-3 xl-3">
-                            <BootstrapCard 
+                            <BootstrapCard
+                                contentURL="api/messagerie/message/non-lus"
                                 title = "Messages Non lus"
                                 icon={<NotificationsActive />}
                                 styles={{
@@ -56,6 +59,7 @@ const Dashboard = () => {
 
                         <div className="col sm-12 md-3 lg-3 xl-3">
                             <BootstrapCard 
+                                contentURL="api/progressions/interactions"
                                 title = "Interactions"
                                 icon={<CallToAction />}
                                 styles={{
@@ -81,7 +85,8 @@ const Dashboard = () => {
                                 </div>
 
                                 <div className="col-4">
-                                    <RechartsPieChart 
+                                    <RechartsPieChart
+                                        contentURL="api/cours/catégories/list-all"
                                         chartName="Répartition des cours"
                                     />
                                 </div>

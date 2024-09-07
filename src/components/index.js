@@ -12,6 +12,7 @@ export { default as MainNav } from "./web/MainNav";
 export { default as NewsSection } from "./web/NewsSection";
 export { default as RecommendedCourses } from "./web/RecommendedCourses";
 export { default as TopNav } from "./web/TopNav";
+export { default as LoginForm } from "./web/LoginForm";
 
 /** Administration-Side Components Exports */
 export { default as AppSidebar } from "./admin/Sidebar/SideBar";

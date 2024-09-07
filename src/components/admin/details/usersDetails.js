@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Row, Col, Button, Form, Input, Select } from 'antd';
+import { Card, Row, Col, Button, Form, Input, Select, Modal } from 'antd';
 
 const { Option } = Select;
 
-const UserDetails = ({ userId }) => {
+const UserDetails = ({ isVisible, handleClose, userId }) => {
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm();
@@ -48,7 +48,13 @@ const UserDetails = ({ userId }) => {
   }
 
   return (
-    <Card title="Détails de l'utilisateur" extra={<Button onClick={handleEdit}>Modifier</Button>}>
+    <Modal
+      open={isVisible}
+      title="Créer un nouveau cours"
+      okText="Modifier"
+      cancelText="Annuler"
+    >
+      <Card title="Détails de l'utilisateur" extra={<Button onClick={handleEdit}>Modifier</Button>}>
       {!isEditing ? (
         <div>
             <Row gutter={[16, 16]}>
@@ -132,6 +138,7 @@ const UserDetails = ({ userId }) => {
         </Form>
       )}
     </Card>
+    </Modal>
   );
 };
 

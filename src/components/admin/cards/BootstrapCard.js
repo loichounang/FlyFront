@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Card, Spinner } from "react-bootstrap";
 //import CountUp from "react-countup";
-import APIBaseURL from "../../../services/ApiServices";
 import axios from "axios";
 import "./CardsStyles.css";
 
-const BootstrapCard = ({ title, content, icon, styles, contentURL }) => {
-    const [cardContent, setCardContent] = useState(content);
+const BootstrapCard = ({ title, icon, styles, contentURL }) => {
+    const [cardContent, setCardContent] = useState([]);
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
   
@@ -14,7 +13,17 @@ const BootstrapCard = ({ title, content, icon, styles, contentURL }) => {
       const fetchContent = async () => {
         setLoading(true);
         try {
-          const response = await axios.get(APIBaseURL + contentURL);
+          // Récupération du token d'authentification de l'utilisateur connecté (depuis le localStorage par exemple)
+          const token = localStorage.getItem('token'); // Assurez-vous que le token est stocké au moment de la connexion
+
+          // Configuration des en-têtes avec le token
+          const config = {
+            headers: {
+              Authorization: `Token ${token}`, // Remplacez "Token" par "Bearer" si le backend attend un token de ce type
+            },
+          };
+
+          const response = await axios.get(`http://127.0.0.1:8000/${contentURL}`, config);
           if (response.status >= 200 && response.status <= 300) {
             setCardContent(response.data);
           } else {
@@ -56,7 +65,7 @@ const BootstrapCard = ({ title, content, icon, styles, contentURL }) => {
             <Spinner animation="border" variant="light" />
           ) : (
             <div className="card-content">
-              {cardContent}
+              {cardContent.length}
             </div>
           )}
           <p>{errorMessage}</p>

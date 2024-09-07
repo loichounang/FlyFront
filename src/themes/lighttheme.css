@@ -1,12 +1,12 @@
 .lightTheme {
     /* Dégradé d'arrière-plan de la sidebar */
-    --sidebar-bg: linear-gradient(135deg, gainsboro 85%, gainsboro 15%);
+    --sidebar-bg: linear-gradient(135deg, dodgerblue 85%, rgba(130, 193, 248, 0.637) 15%);
     
     /* Couleur du texte de la sidebar */
     --sidebar-color: #3e3a3a; /* Un gris foncé pour une bonne lisibilité sur fond clair */
     
     /* Dégradé d'arrière-plan de la navbar */
-    --navbar-bg: linear-gradient(135deg, gainsboro 25%, gainsboro 75%);
+    --navbar-bg: linear-gradient(135deg, lightblue 25%, cyan 75%);
 
     /* Couleur des icones de la navbar */
     --navbar-icon: black;
