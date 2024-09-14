@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, ListGroup } from "react-bootstrap";
-import APIBaseURL from "../../../services/ApiServices";
-import axios from "axios";
+//import APIBaseURL from "../../../services/ApiServices";
+//import axios from "axios";
 import { WarningRounded } from "@mui/icons-material";
 import "./AlertSummary.css";
 
@@ -13,7 +13,7 @@ const AlertSummary = ({ contentURL }) => {
     ]);
 
     useEffect(() => {
-        const fetchAlerts = async () => {
+        /*const fetchAlerts = async () => {
             try {
                 const response = await axios.get(APIBaseURL + contentURL);
                 if (response.data && response.data.length > 0) {
@@ -24,7 +24,7 @@ const AlertSummary = ({ contentURL }) => {
             }
         };
 
-        fetchAlerts();
+        fetchAlerts();*/
     }, [contentURL]);
 
     return (

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, ListGroup } from "react-bootstrap";
-import APIBaseURL from "../../../services/ApiServices";
-import axios from "axios";
+//import APIBaseURL from "../../../services/ApiServices";
+//import axios from "axios";
 import { Notifications } from "@mui/icons-material";
 import "./NotificationList.css";
 
@@ -13,7 +13,7 @@ const NotificationList = ({ contentURL }) => {
     ]);
 
     useEffect(() => {
-        const fetchNotifications = async () => {
+        /*const fetchNotifications = async () => {
             try {
                 const response = await axios.get(APIBaseURL + contentURL);
                 if (response.data && response.data.length > 0) {
@@ -24,7 +24,7 @@ const NotificationList = ({ contentURL }) => {
             }
         };
 
-        fetchNotifications();
+        fetchNotifications();*/
     }, [contentURL]);
 
     return (

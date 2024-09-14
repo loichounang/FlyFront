@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-import APIBaseURL from "../../../services/ApiServices";
+//import APIBaseURL from "../../../services/ApiServices";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,7 +11,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import axios from "axios";
+//import axios from "axios";
 
 ChartJS.register(
   CategoryScale,
@@ -27,7 +27,7 @@ const AppLineChart = ({ contentURL, chartName }) => {
   const [chartData, setChartData] = useState({});
 
   useEffect(() => {
-    const fetchData = async () => {
+    /*const fetchData = async () => {
       try {
         const response = await axios.get(APIBaseURL + contentURL);
         if(response.status >=200 && response.status <= 300){
@@ -73,7 +73,7 @@ const AppLineChart = ({ contentURL, chartName }) => {
       }
     };
 
-    fetchData();
+    fetchData();*/
   }, [contentURL, chartName]);
 
   return (

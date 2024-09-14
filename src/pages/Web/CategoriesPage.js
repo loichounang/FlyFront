@@ -1,40 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Grid, Card, CardMedia, CardContent, InputBase, Paper, IconButton } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
-import categoryImage1 from '../../assets/images/categoryImage1.png'; // Example image
-import categoryImage2 from '../../assets/images/categoryImage2.png'; // Example image
+// import categoryImage1 from '../../assets/images/categoryImage1.png'; // Example image
+// import categoryImage2 from '../../assets/images/categoryImage2.png'; // Example image
 import courImage from '../../assets/images/categories.png'; // Import the image
-
-const categories = [
-  {
-    id: 1,
-    image: categoryImage1,
-    title: 'Développement Web',
-    description: 'Apprenez les bases du développement web, HTML, CSS, et JavaScript.',
-  },
-  {
-    id: 2,
-    image: categoryImage2,
-    title: 'Développement Mobile',
-    description: 'Créez des applications mobiles pour Android et iOS.',
-  },
-  {
-    id: 3,
-    image: categoryImage1,
-    title: 'Data Science',
-    description: 'Analysez des données et apprenez le machine learning.',
-  },
-  {
-    id: 4,
-    image: categoryImage2,
-    title: 'Cybersécurité',
-    description: 'Protégez les systèmes informatiques contre les cybermenaces.',
-  },
-  // Add more categories as needed
-];
+import { ListAllCategories } from '../../services/CategoriesServices/CategoriesServices';
+import { Spinner } from "react-bootstrap";
+import "../../assets/styles/CoursesCard.css";
 
 const CategoriesPage = () => {
+  
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
   const categoryCount = categories.length;
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await ListAllCategories();
+        console.log('Courses Response:', response);
+        setCategories(response);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des cours:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchCategories();
+    // Le tableau de dépendances doit être vide si vous souhaitez exécuter l'effet une seule fois
+  }, []); 
 
   return (
     <Box sx={{ backgroundColor: '#e1eaea' }}>
@@ -99,31 +94,38 @@ const CategoriesPage = () => {
           </IconButton>
         </Paper>
         <Grid container spacing={4}>
-          {categories.map((category) => (
-            <Grid item xs={12} sm={6} md={3} key={category.id}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={category.image}
-                  alt={category.title}
-                />
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    sx={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '10px' }}
-                  >
-                    {category.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '12px', marginBottom: '10px' }}>
-                    {category.description}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+        {loading ? <Spinner /> : (
+            categories.map((category) => {
+              console.log(category.cours_image); // Vérifie si l'URL est bien définie
+              return (
+                <Grid item xs={12} sm={6} md={3} key={category.id}>
+                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} className='coursesCard'>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={category.image ? category.image : 'https://via.placeholder.com/150'}
+                    alt={category.name}
+                    sx={{ objectFit: 'cover' }}
+                  />
+                  <CardContent sx={{ flexGrow: 1 }} style={{textAlign: "left"}}>
+                    <Typography
+                      gutterBottom
+                      variant="h5"
+                      component="div"
+                      sx={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '10px' }}
+                    >
+                      {category.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '12px', marginBottom: '10px' }}>
+                      {category.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              )
+            }
+          )
+          )}
         </Grid>
       </Box>
     </Box>

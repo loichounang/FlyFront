@@ -1,82 +1,52 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Grid, Card, CardMedia, CardContent, Rating, InputBase, Paper, IconButton } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 
-import courseImage1 from '../../assets/images/courseImage1.png'; // Example image
-import courseImage2 from '../../assets/images/courseImage2.png'; // Example image
+// import courseImage1 from '../../assets/images/courseImage1.png'; // Example image
+// import courseImage2 from '../../assets/images/courseImage2.png'; // Example image
 import courImage from '../../assets/images/cour.png'; // Import the image
-import flypoolLogo from '../../assets/images/flypoolLogo.png'; // Import Flypool logo
+// import flypoolLogo from '../../assets/images/flypoolLogo.png'; // Import Flypool logo
+import { ListAllCours } from '../../services/CoursServices/CoursServices';
+import { Spinner } from 'react-bootstrap';
+import { submitRating } from '../../services/RatingServices/RatingServices';
+import useNotification from '../../components/common/UseNotification';
+import "../../assets/styles/CoursesCard.css";
 
-const courses = [
-  {
-    id: 1,
-    image: courseImage1,
-    title: 'Introduction au Développement Web',
-    duration: '3 heures',
-    rating: 4.5,
-    lessons: 12,
-  },
-  {
-    id: 2,
-    image: courseImage2,
-    title: 'Maîtriser JavaScript pour Développeurs',
-    duration: '5 heures',
-    rating: 5,
-    lessons: 15,
-  },
-  {
-    id: 3,
-    image: courseImage2,
-    title: 'Développement Backend avec Node.js',
-    duration: '6 heures',
-    rating: 5,
-    lessons: 17,
-  },
-  {
-    id: 4,
-    image: courseImage1,
-    title: 'Développement Frontend avec React',
-    duration: '5 heures',
-    rating: 5,
-    lessons: 15,
-  },
-  {
-    id: 6,
-    image: courseImage1,
-    title: 'Introduction au Développement Web',
-    duration: '3 heures',
-    rating: 4.5,
-    lessons: 12,
-  },
-  {
-    id: 7,
-    image: courseImage2,
-    title: 'Maîtriser JavaScript pour Développeurs',
-    duration: '5 heures',
-    rating: 5,
-    lessons: 15,
-  },
-  {
-    id: 8,
-    image: courseImage2,
-    title: 'Développement Backend avec Node.js',
-    duration: '6 heures',
-    rating: 5,
-    lessons: 17,
-  },
-  {
-    id: 9,
-    image: courseImage1,
-    title: 'Développement Frontend avec React',
-    duration: '5 heures',
-    rating: 5,
-    lessons: 15,
-  },
-  // Add more courses as needed
-];
 
 const CoursesPage = () => {
+  const notify = useNotification();
+  const [loading, setLoading] = useState(true);
+  const [courses, setCourses] = useState([]);
+  const [rating, setRating] = useState(0);
   const courseCount = courses.length;
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await ListAllCours();
+        console.log('Courses Response:', response);
+        setCourses(response);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des cours:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchCourses();
+    // Le tableau de dépendances doit être vide si vous souhaitez exécuter l'effet une seule fois
+  }, []); 
+
+  const handleRatingChange = async (value, courseId) => {
+    try {
+      const response = await submitRating(courseId, value); // Appel à l'API pour soumettre la note
+      if (response.status >= 200 && response.status <= 300) {
+        notify("Rating updated successfully", "info", 3000);
+      }
+    } catch (error) {
+      notify("Error submitting rating: " + error, "error", 3000);
+    }
+  };
 
   return (
     <Box sx={{ backgroundColor: '#f9f9f9' }}>
@@ -142,52 +112,55 @@ const CoursesPage = () => {
           </IconButton>
         </Paper>
         <Grid container spacing={4}>
-          {courses.map((course) => (
-            <Grid item xs={12} sm={6} md={3} key={course.id}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={course.image}
-                  alt={course.title}
-                />
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    sx={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '10px' }}
-                  >
-                    {course.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '12px', marginBottom: '10px' }}>
-                    Durée: {course.duration}
-                  </Typography>
-                  <Box display="flex" alignItems="center" gap="10px" marginBottom="10px">
-                    <Box
-                      component="img"
-                      src={flypoolLogo}
-                      alt="Flypool Logo"
-                      sx={{ height: '24px', width: '24px', borderRadius: '50%' }}
-                    />
-                    <Typography variant="body2" sx={{ fontSize: '12px' }}>
-                      Flypool
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '12px', marginBottom: '10px' }}>
-                    Nombre de leçons: {course.lessons}
-                  </Typography>
-                  <Rating
-                    name="course-rating"
-                    value={course.rating}
-                    precision={0.5}
-                    readOnly
-                    size="small"
+          {loading ? <Spinner /> : (
+            courses.map((course) => {
+              console.log(course.cours_image); // Vérifie si l'URL est bien définie
+              return (
+                <Grid item xs={12} sm={6} md={3} key={course.id}>
+                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} className='coursesCard'>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={course.image ? course.image : 'https://via.placeholder.com/150'}
+                    alt={course.titre}
+                    sx={{ objectFit: 'cover' }}
                   />
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+                  <CardContent sx={{ flexGrow: 1 }} style={{textAlign: "left"}}>
+                    <Typography
+                      gutterBottom
+                      variant="h5"
+                      component="div"
+                      sx={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '10px' }}
+                    >
+                      {course.titre}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '12px', marginBottom: '10px' }}>
+                      <span style={{fontWeight: "bold", fontSize: "1.1em"}}>Durée:</span>  {course.durée} heure (s)
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '12px', marginBottom: '10px' }}>
+                      <span style={{fontWeight: "bold", fontSize: "1.1em"}}>Auteur:</span>  {course.auteur}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '12px', marginBottom: '10px' }}>
+                      <span style={{fontWeight: "bold", fontSize: "1.1em"}}>Catégorie:</span>  {course.category}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '12px', marginBottom: '10px' }}>
+                      Nombre de leçons: {course.lessons}
+                    </Typography>
+                    <Rating
+                      name="course-rating"
+                      value={course.rating}
+                      precision={0.5}
+                      size="small"
+                      onChange={(event, newValue) => setRating(newValue)}
+                      onClick={() => handleRatingChange(rating,course.id)}
+                    />
+                  </CardContent>
+                </Card>
+              </Grid>
+              )
+            }
+          )
+          )}
         </Grid>
       </Box>
     </Box>

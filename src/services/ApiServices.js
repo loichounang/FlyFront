@@ -1,5 +1,19 @@
-const APIBaseURL = () => {
-    return "127.0.0.1:8000/"
+// Server BASE URL
+export const BASE_URL = 'http://127.0.0.1:8000';
+
+// APIs BASES URLS
+export const COURS_API = "api/cours";
+export const USERS_API = "api/utilisateurs";
+
+// For Authenticated All users requests
+export const USER_TOKEN = localStorage.getItem("token");
+
+export const requestsConfig = {
+    headers: {
+        Authorization: `Bearer ${USER_TOKEN}`,
+        'Content-Type': 'application/json'
+    }
 }
 
-export default APIBaseURL;
+
+// Others API CALLS

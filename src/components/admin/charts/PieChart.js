@@ -20,7 +20,7 @@ const RechartsPieChart = ({ contentURL, chartName }) => {
         // Formater les données en un format adapté au graphique
         const formattedData = data.map((category) => ({
           name: category.name, // Utilise le libellé comme nom de la catégorie
-          value: category.nombre_de_cours, // Assure-toi que ce champ représente le nombre de cours
+          value: category.value, // Assure-toi que ce champ représente le nombre de cours
         }));
 
         // Générer un tableau de couleurs aléatoires de la même longueur que les catégories

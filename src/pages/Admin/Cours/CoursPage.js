@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import "./CoursPage.css";
 import { IconButton, Button } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { Add, Delete, Edit, Info } from "@mui/icons-material";
 import { CreateCourses } from "../../../components/admin/forms";
 import { CoursesList } from "../../../components/admin/lists";
-import { ActionCard } from "../../../components/admin/cards";
 
 const CoursPage = () => {
     const [visible, setVisible] = useState(false);
@@ -22,15 +21,16 @@ const CoursPage = () => {
         {title: "ID", dataIndex: "id", key: "id"},
         {title: "Titre", dataIndex: "titre", key: "titre"},
         {title: "Auteur", dataIndex: "auteur", key: "auteur"},
-        {title: "Durée", dataIndex: "durée", key: "durée"},
+        {title: "Durée (heures)", dataIndex: "durée", key: "durée"},
         {title: "Catégorie", dataIndex: "category", key: "category"},
         {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
                 <>
-                    <Button onClick={() => {/* Fonction d'édition */}}>Modifier</Button>
-                    <Button onClick={() => {/* Fonction de suppression */}} danger>Supprimer</Button>
+                    <Button onClick={() => {/* Fonction d'édition */}}><Info style={{color: "slateblue"}}/></Button>
+                    <Button onClick={() => {/* Fonction de suppression */}}><Delete style={{color: "crimson"}}/></Button>
+                    <Button onClick={() => {/* Fonction de suppression */}}><Edit style={{color: "darkgreen"}}/></Button>
                 </>
             ),
         },
@@ -51,20 +51,13 @@ const CoursPage = () => {
                 <CreateCourses 
                     visible={visible}
                     onCancel={() => hideForm()}
-                    contentURL="api/cours/cours/"
-                    contentURL1="api/cours/categories/"
-                    contentURL2={`api/utilisateurs/utilisateurs/${localStorage.getItem("uid")}/get_admins`}
                 />
 
                 <div className="row">
-                    <div className="col-9">
+                    <div className="col">
                         <CoursesList 
                             dataColumns={columns}
                         />
-                    </div>
-
-                    <div className="col-3">
-                        <ActionCard />
                     </div>
                 </div>
 

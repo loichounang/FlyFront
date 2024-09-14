@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import axios from "axios";
-import APIBaseURL from "../../../services/ApiServices";
+//import axios from "axios";
+//import APIBaseURL from "../../../services/ApiServices";
 
 const RechartsLineChart = ({ contentURL, chartName }) => {
   const [chartData, setChartData] = useState([]);
 
   // Fonction pour récupérer les données depuis le backend
   useEffect(() => {
-    const fetchData = async () => {
+    /*const fetchData = async () => {
       try {
         const response = await axios.get(APIBaseURL + contentURL);
         const data = response.data;
@@ -24,7 +24,7 @@ const RechartsLineChart = ({ contentURL, chartName }) => {
       }
     };
 
-    fetchData();
+    fetchData();*/
   }, [contentURL]);
 
   // Données par défaut pour le diagramme linéaire

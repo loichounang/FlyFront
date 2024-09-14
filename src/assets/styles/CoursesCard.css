@@ -1,0 +1,4 @@
+.coursesCard:hover {
+    transition: all ease-in-out 0.3s;
+    box-shadow: 5px 7px 22px 3px dimgray;
+}

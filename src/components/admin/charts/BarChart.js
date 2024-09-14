@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
-import APIBaseURL from "../../../services/ApiServices";
-import axios from "axios";
+//import APIBaseURL from "../../../services/ApiServices";
+//import axios from "axios";
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
@@ -55,7 +55,7 @@ const backgroundColors = randomNumbers.map(getColor);
   });
 
   useEffect(() => {
-    const fetchData = async () => {
+    /*const fetchData = async () => {
       try {
         const response = await axios.get(APIBaseURL + contentURL);
         const data = response.data;
@@ -84,7 +84,7 @@ const backgroundColors = randomNumbers.map(getColor);
       }
     };
 
-    fetchData();
+    fetchData();*/
   }, [contentURL]);
 
   return (

@@ -1,144 +1,112 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Input, Select, Checkbox, Pagination } from 'antd';
-import axios from 'axios';
+import { Table, Input, Select, Checkbox, Pagination, Space } from 'antd';
 import { useSnackbar } from 'notistack';
+import { ListAllCours } from '../../../services/CoursServices/CoursServices';
+import { ListAllCategories } from '../../../services/CategoriesServices/CategoriesServices';
+import { Button } from "@mui/material";
+import { Book, Category, PeopleAlt } from '@mui/icons-material';
+import { CreateCategories, CreateChapters } from '../forms';
 
+const ShowNotification = ({ text, type, duration }) => {
+  const { enqueueSnackbar } = useSnackbar();
+  return enqueueSnackbar(text, {
+    variant: type,
+    autoHideDuration: duration,
+  });
+};
 
-const CoursesManagement = ({dataColumns}) => {
+const CoursesManagement = ({ dataColumns }) => {
   const [courses, setCourses] = useState([]);
-  const [filteredCourses, setFilteredCourses] = useState([]); // Liste filtrée des cours
+  const [filteredCourses, setFilteredCourses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10); // Nombre d'éléments par page
+  const [pageSize, setPageSize] = useState(10);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [modals, setModals] = useState({ participants: false, chapters: false, category: false });
 
-  const {enqueueSnackbar} = useSnackbar();
+  function toggleModal(type) {
+    setModals(prev => ({ ...prev, [type]: !prev[type] }));
+  }
 
   useEffect(() => {
     setLoading(true);
-    // Charger la liste des cours depuis l'API ou le state global
-    const fetchCourses = async() => {
-      const token = localStorage.getItem("token"); // Récupérer le token parmi les informations de connexion
-
-      const config = {
-        headers : {
-          Authorization: `Token ${token}`, // Assurez-vous que le backend attend un token de ce type
-        },
-      };
-
+    const fetchCourses = async () => {
       try {
-        const coursesResponse = await axios.get("http://127.0.0.1:8000/api/cours/cours", {}, config);
-        setCourses(coursesResponse.data);
-      } catch (error) {
-        const status = error.response?.status;
-        const data = error.response?.data;
-        switch (status) {
-          case 500:
-            enqueueSnackbar(data.detail ? data.detail : "Une erreur interne est survenue de notre côté", {
-              variant: "error",
-              autoHideDuration: 3000
-            });
-            break;
-          case 404:
-            enqueueSnackbar(data.detail ? data.detail : "Le chemin spécifié est introuvable" , {
-              variant: "error",
-              autoHideDuration: 3000
-            });
-            break;
-          case 403:
-            enqueueSnackbar(data.detail ? data.detail : "Vous ne disposez pas de l'accès à cette ressource" , {
-              variant: "warning",
-              autoHideDuration: 3000
-            });
-            break;
-          case 301:
-            enqueueSnackbar(data.detail ? data.detail : "Ces données ont été permanemment déplacées" , {
-              variant: "info",
-              autoHideDuration: 3000
-            });
-            break;
-        
-          default:
-            break;
+        const response = await ListAllCours();
+        console.log('Courses Response:', response);
+        if (Array.isArray(response)) {
+          setCourses(response);
+        } else {
+          console.error("Les données reçues ne sont pas un tableau:", response);
         }
-      } finally{
+      } catch (error) {
+        console.error("Erreur lors de la récupération des cours:", error);
+        ShowNotification("Erreur lors de la récupération des cours", "error", 3000);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchCourses();
-  }, [enqueueSnackbar]);
+  }, []);
 
   useEffect(() => {
-    // Filtrage initial lors du chargement des utilisateurs
     setFilteredCourses(courses);
   }, [courses]);
 
   useEffect(() => {
-    //Récupération de la liste des catégories
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/cours/categories");
-        setCategories(response.data);
+        const response = await ListAllCategories();
+        console.log(response);
+        setCategories(Array.isArray(response) ? response : []);
       } catch (error) {
-        const status = error.response?.status;
-        const data = error.response?.data;
+        let status = error.response?.status;
+        let detail = error.response?.detail;
         switch (status) {
           case 500:
-            enqueueSnackbar(data.detail ? data.detail : "Une erreur interne est survenue de notre côté", {
-              variant: "error",
-              autoHideDuration: 3000
-            });
+            ShowNotification(detail ? detail : "Erreur interne du serveur", "error", 3000);
             break;
-          case 404:
-            enqueueSnackbar(data.detail ? data.detail : "Le chemin spécifié est introuvable" , {
-              variant: "error",
-              autoHideDuration: 3000
-            });
+          case 401:
+            ShowNotification(detail ? detail : "Erreur d'autorisations", "error", 3000);
             break;
           case 403:
-            enqueueSnackbar(data.detail ? data.detail : "Vous ne disposez pas de l'accès à cette ressource" , {
-              variant: "warning",
-              autoHideDuration: 3000
-            });
+            ShowNotification(detail ? detail : "Forbiden", "warning", 3000);
             break;
-          case 301:
-            enqueueSnackbar(data.detail ? data.detail : "Ces données ont été permanemment déplacées" , {
-              variant: "info",
-              autoHideDuration: 3000
-            });
+          case 404:
+            ShowNotification(detail ? detail : "Introuvable", "info", 3000);
             break;
-        
           default:
+            ShowNotification(detail ? detail : "Une erreur inattendue s'est produite", "error", 3000);
             break;
         }
       }
     };
 
     fetchCategories();
-  }, [enqueueSnackbar]);
+  }, []);
 
   const handleSearch = (term) => {
-    const filtered = courses.filter(courses =>
-      courses.titre.toLowerCase().includes(term.toLowerCase())
+    const filtered = courses.filter(course =>
+      course.titre.toLowerCase().includes(term.toLowerCase())
     );
     setFilteredCourses(filtered);
-    setCurrentPage(1); // Réinitialiser à la première page après la recherche
+    setCurrentPage(1);
   };
 
   const handleCategoryFilter = (category) => {
     const filtered = courses.filter(course => course.category === category);
     setFilteredCourses(filtered);
-    setCurrentPage(1); // Réinitialiser à la première page après le filtrage
+    setCurrentPage(1);
   };
 
   const handleStatusFilter = (e) => {
     const isActive = e.target.checked;
     const filtered = courses.filter(course => course.status === (isActive ? 'active' : 'inactive'));
     setFilteredCourses(filtered);
-    setCurrentPage(1); // Réinitialiser à la première page après le filtrage
+    setCurrentPage(1);
   };
 
   const handleChangePage = (page, pageSize) => {
@@ -146,18 +114,33 @@ const CoursesManagement = ({dataColumns}) => {
     setPageSize(pageSize);
   };
 
-  const currentData = filteredCourses.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const currentData = Array.isArray(filteredCourses) 
+    ? filteredCourses.slice((currentPage - 1) * pageSize, currentPage * pageSize) 
+    : [];
 
-  // Configuration du rowSelection pour permettre une seule sélection
+
   const rowSelection = {
-    type: 'radio', // Permet de sélectionner une seule ligne à la fois
+    type: 'checkbox',
     selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      setSelectedRowKeys(selectedRowKeys); // Met à jour les clés sélectionnées
+      // Limite la sélection à un maximum de deux éléments
+      if (selectedRowKeys.length > 1) {
+        // Conserver uniquement les deux premiers éléments sélectionnés
+        selectedRowKeys = selectedRowKeys.slice(0, 1);
+        // Mettre à jour la sélection des lignes
+        selectedRows = selectedRows.slice(0, 1);
+      }
+  
+      setSelectedRowKeys(selectedRowKeys);
+  
       if (selectedRows.length > 0) {
-        setSelectedId(selectedRows[0].id); // Récupère l'ID de l'élément sélectionné
-        // Effectuer des actions avec l'ID sélectionné ici
-        console.log('ID sélectionné:', selectedRows[0].id);
+        // Si plus d'un élément est sélectionné, utilisez les IDs des éléments sélectionnés
+        const ids = selectedRows.map(row => row.id);
+        setSelectedId(ids);
+        console.log('IDs sélectionnés:', ids);
+      } else {
+        // Si aucun élément n'est sélectionné, réinitialisez les IDs
+        setSelectedId(null);
       }
     },
   };
@@ -170,19 +153,38 @@ const CoursesManagement = ({dataColumns}) => {
         style={{ marginBottom: 20 }}
       />
       <div style={{ marginBottom: 20 }}>
-        <Select placeholder="Filtrer par catégories" onChange={handleCategoryFilter} style={{ width: 200, marginRight: 10 }}>
-          {categories.map((element, index) => {
-            return (
-              <Select.Option key={index} value={element.id}>
-                {element.libellé}
-              </Select.Option>
-            
-            )
-          })}
+        <Select placeholder="Filtrer par catégories" onChange={handleCategoryFilter} style={{ width: 200, marginRight: 10, float: "right"}}>
+          {categories.map((element, index) => (
+            <Select.Option key={index} value={element.id}>
+              {element.name}
+            </Select.Option>
+          ))}
         </Select>
         <Checkbox onChange={handleStatusFilter} style={{color: "var(--content-title-text-color)"}}>Afficher uniquement les cours commencés</Checkbox>
       </div>
-      <Table columns={dataColumns} dataSource={currentData} rowKey="id" pagination={true} loading={loading} rowSelection={rowSelection} />
+      <Space style={{ marginBottom: 20, float: "left"}}>
+        <Button 
+          onClick={() => toggleModal('chapters')} 
+          disabled={!selectedId}
+        >
+          Chapitres <Book />
+        </Button>
+        <Button 
+          onClick={() => toggleModal('participants')} 
+          disabled={!selectedId}
+        >
+          Participants <PeopleAlt />
+        </Button>
+        
+      </Space>
+      <Space style={{ float: "right"}}>
+        <Button 
+          onClick={() => toggleModal('category')} 
+        >
+          Créer une catégorie <Category />
+        </Button>
+      </Space>
+      <Table columns={dataColumns} dataSource={currentData} rowKey="id" pagination={false} loading={loading} rowSelection={rowSelection} />
       <Pagination
         current={currentPage}
         pageSize={pageSize}
@@ -192,6 +194,9 @@ const CoursesManagement = ({dataColumns}) => {
         onShowSizeChange={handleChangePage}
         style={{ marginTop: 20, textAlign: 'right' }}
       />
+      {/*<CreateChapters visible={modals.chapter} onCancel={() => toggleModal('chapter')}/>*/}
+      <CreateChapters visible={modals.chapters} onCancel={() => toggleModal('chapters')} courseID={selectedId} />
+      <CreateCategories visible={modals.category} onCancel={() => toggleModal('category')} />
     </div>
   );
 };

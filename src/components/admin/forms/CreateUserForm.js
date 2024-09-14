@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, Select } from 'antd';
-import axios from 'axios';
-import APIBaseURL from '../../../services/ApiServices';
+//import axios from 'axios';
+//import APIBaseURL from '../../../services/ApiServices';
 
 const { Option } = Select;
 
@@ -17,7 +17,7 @@ const CreateUserModal = ({ visible, onCreate, onCancel, theme, contentURL }) => 
   };
 
   useEffect(() => {
-    const FetchTeams = async() => {
+    /*const FetchTeams = async() => {
       try {
         const teamsResponse = await axios.get("http://" + APIBaseURL + contentURL);
         if(teamsResponse.status >= 200 && teamsResponse.status <= 300) {
@@ -41,7 +41,7 @@ const CreateUserModal = ({ visible, onCreate, onCancel, theme, contentURL }) => 
       }
     }
 
-    FetchTeams();
+    FetchTeams();*/
   }, [contentURL]);
 
   return (

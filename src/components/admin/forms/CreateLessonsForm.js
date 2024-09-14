@@ -1,9 +1,9 @@
 // CreateLessonForm.js
 import { Modal, Form, Input, Upload, Select, Button } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import axios from "axios";
+//import axios from "axios";
 import React, { useEffect, useState } from "react";
-import APIBaseURL from "../../../services/ApiServices";
+//import APIBaseURL from "../../../services/ApiServices";
 
 const CreateLessonForm = ({ visible, onCreate, onCancel, contentURL }) => {
   const [form] = Form.useForm();
@@ -21,7 +21,7 @@ const CreateLessonForm = ({ visible, onCreate, onCancel, contentURL }) => {
     });
 
     // Appeler une API ou gérer la création de la leçon ici
-    axios
+    /*axios
       .post("http://" + APIBaseURL + contentURL, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       })
@@ -31,7 +31,7 @@ const CreateLessonForm = ({ visible, onCreate, onCancel, contentURL }) => {
       })
       .catch((error) => {
         setErrorMessage("Erreur lors de la création de la leçon");
-      });
+      });*/
   };
 
   // Récupérer la liste des chapitres disponibles

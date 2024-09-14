@@ -1,83 +1,70 @@
 import { Modal, Form, Input } from "antd";
 import React, { useState } from "react";
-import axios from "axios";
-import { useSnackbar } from "notistack";
-//import APIBaseURL from "../../../services/ApiServices";
+import { Spinner } from "react-bootstrap";
+import { CreateCategoriesAPI } from "../../../services/CategoriesServices/CategoriesServices";
+import useNotification from "../../common/UseNotification";
 
 const CreateCategoryForm = ({ visible, onCreate, onCancel, contentURL }) => {
   const [form] = Form.useForm();
   const [errorMessage, setErrorMessage] = useState("");
-  const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const notify = useNotification();
+
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  }
 
   const handleFinish = async (values) => {
+    setLoading(true);
     try {
-      // Récupération du token d'authentification de l'utilisateur connecté
-      const token = localStorage.getItem('token'); // Assurez-vous que le token est stocké lors de la connexion
-  
-      // Configuration des en-têtes avec le token
-      const config = {
-        headers: {
-          Authorization: `Token ${token}`, // Assurez-vous que le backend attend un token de ce type
-        },
-      };
-      // Appel API pour créer une nouvelle catégorie
-      const response = await axios.post(`http://127.0.0.1:8000/${contentURL}`, values, config);
-      if(response.status >= 200 && response.status <= 300){
-        enqueueSnackbar(response.data.message, {
-          autoHideDuration: 3000,
-          variant: "success",
-        });
+      const formData = new FormData();
+
+      formData.append('name', values.name);
+      formData.append('description', values.description);
+
+      if(selectedFile) {
+        formData.append('image', selectedFile);
       }
-      onCreate(values);
-      form.resetFields();
-    } catch (error) {
-      switch (error.response?.status) {
-        case 500:
-          enqueueSnackbar(error.response?.data.detail || "Erreur interne du serveur!", {
-            autoHideDuration: 5000,
-            variant: "error",
-          });
-          break;
-        case 401:
-          enqueueSnackbar(error.response?.data.detail || "Vous ne pouvez pas accéder à cette ressource!", {
-            autoHideDuration: 5000,
-            variant: "error",
-          });
-          break;
-        case 404:
-          enqueueSnackbar(error.response?.data.detail || "Chemin Incorrect ou manquant!", {
-            autoHideDuration: 5000,
-            variant: "error",
-          });
-          break;
-        case 403:
-          enqueueSnackbar(error.response?.data.detail || "Oups! Vous n'y avez pas droit!", {
-            autoHideDuration: 5000,
-            variant: "error",
-          });
-          break;
-        case 301:
-          enqueueSnackbar(error.response?.data.detail || "La ressource a été définitivement déplacée!", {
-            autoHideDuration: 5000,
-            variant: "info",
-          });
-          break;
-      
-        default:
-          enqueueSnackbar(error.response?.data.detail || "Une erreur inattendue empêche la création de la catégorie!", {
-            autoHideDuration: 5000,
-            variant: "info",
-          });
-          break;
+
+      const response = await CreateCategoriesAPI(formData);
+      if (response) {
+        switch (response) {
+          case 200:
+            notify("Catégorie Crée avec succèss", "success", 5000);
+            break;
+          case 201:
+            notify("Catégorie Crée avec succèss", "success", 5000);
+            break;
+
+          default:
+            notify("Catégorie Crée avec succèss", "success", 5000);
+            break;
+        }
       }
-    }
+
+      } catch (error){
+        const status = error.response?.status;
+        const integrityConstraint = error.response?.name
+        switch (status) {
+          case 400:
+            notify(integrityConstraint !== "" ? integrityConstraint: "Une catégorie avec ce nom existe déjà", "error", 5000);
+            break;
+        
+          default:
+            break;
+        }
+      } finally {
+        form.resetFields();
+        setLoading(false);
+      }
   };
 
   return (
     <Modal
       open={visible}
       title="Créer une nouvelle catégorie"
-      okText="Créer"
+      okText={loading ? <Spinner /> : "Créer"}
       cancelText="Annuler"
       onCancel={() => {
         onCancel();
@@ -120,6 +107,14 @@ const CreateCategoryForm = ({ visible, onCreate, onCancel, contentURL }) => {
             rules={[{ required: true }]}
           >
             <Input.TextArea placeholder="Description de la catégorie" rows={4} />
+          </Form.Item>
+
+          <Form.Item
+            name="image"
+            label="Image"
+            rules={[{ required: false }]}
+          >
+            <Input type="file" name="image" onChange={handleFileChange}/>
           </Form.Item>
         </Form>
       </div>

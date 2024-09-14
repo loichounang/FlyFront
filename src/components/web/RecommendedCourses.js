@@ -1,53 +1,21 @@
 import React from 'react';
 import { Box, Typography, Grid, Card, CardMedia, CardContent, Rating, Button } from '@mui/material';
-import courseImage1 from '../../assets/images/courseImage1.png'; // Example image
-import courseImage2 from '../../assets/images/courseImage2.png'; // Example image
+// import courseImage1 from '../../assets/images/courseImage1.png'; // Example image
+// import courseImage2 from '../../assets/images/courseImage2.png'; // Example image
 import flypoolLogo from '../../assets/images/flypoolLogo.png'; // Import Flypool logo
 
-const recommendedCourses = [
-  {
-    id: 1,
-    image: courseImage1,
-    title: 'Introduction au Développement Web',
-    duration: '3 heures',
-    rating: 4.5,
-    lessons: 12,
-  },
-  {
-    id: 2,
-    image: courseImage2,
-    title: 'Maîtriser JavaScript pour Développeurs',
-    duration: '5 heures',
-    rating: 5,
-    lessons: 15,
-  },
-  {
-    id: 3,
-    image: courseImage2,
-    title: 'Développement Backend avec Node.js',
-    duration: '6 heures',
-    rating: 5,
-    lessons: 17,
-  },
-  {
-    id: 4,
-    image: courseImage1,
-    title: 'Développement Frontend avec React',
-    duration: '5 heures',
-    rating: 5,
-    lessons: 15,
-  },
-  // Add more courses as needed
-];
 
 const RecommendedCourses = () => {
+const courses = [
+
+];
   return (
     <Box sx={{ padding: '40px', backgroundColor: '#f9f9f9' }}>
       <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '20px' }}>
         Cours Recommandés
       </Typography>
       <Grid container spacing={4}>
-        {recommendedCourses.map((course) => (
+        {courses.map((course) => (
           <Grid item xs={12} sm={6} md={3} key={course.id}>
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <CardMedia
