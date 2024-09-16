@@ -4,18 +4,21 @@ import { ListChaptersByCourseID } from "../../../services/ChapitresServices/Chap
 import { ListLessonsByChapterID } from "../../../services/LessonsServices/LessonsServices";
 import { Box, Typography, Grid, Card, CardContent, List, ListItem, ListItemText, CircularProgress, IconButton } from '@mui/material';
 import { Add, ChevronRight, RefreshOutlined } from '@mui/icons-material';
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import CreateLessonForm from "../forms/CreateLessonsForm";
 import { Button } from "antd";
 
-const CourseDetail = ({ isAdmin }) => {
+const CourseDetail = () => {
     const { courseId } = useParams();
+    const location = useLocation();
     const [courseData, setCourseData] = useState(null);
     const [courseChapters, setCourseChapters] = useState([]);
     const [chaptersLessons, setChaptersLessons] = useState({});
     const [loading, setLoading] = useState(true);
     const [showed, setShowed] = useState(false);
     const [selectedChapter, setSelectedChapter] = useState(null);
+
+    const isAdminRoute = location.pathname.startsWith("/admin");
 
     function showHideModal(chapter = null) {
         setSelectedChapter(chapter);
@@ -30,6 +33,7 @@ const CourseDetail = ({ isAdmin }) => {
     
             const chaptersResponse = await ListChaptersByCourseID(courseId);
             const chaptersInCourse = chaptersResponse.chapitres || [];
+    
             if (Array.isArray(chaptersInCourse)) {
                 setCourseChapters(chaptersInCourse);
     
@@ -75,7 +79,7 @@ const CourseDetail = ({ isAdmin }) => {
                     </Typography>
                     <Grid container spacing={4}>
                         <Grid item xs={12} md={4}>
-                            <Card sx={{ height: '100%', background: "transparent", color: "whitesmoke", padding: "1rem", textAlign: "left" }}>
+                            <Card sx={{ height: '100%', background: isAdminRoute ? "lightgray" : "transparent", color: isAdminRoute ? "black" : "whitesmoke", padding: "1rem", textAlign: "left" }}>
                                 <img
                                     src={courseData.image}
                                     alt={courseData.titre}
@@ -117,7 +121,7 @@ const CourseDetail = ({ isAdmin }) => {
                             <Button onClick={handleRefresh}>
                                 <RefreshOutlined />
                             </Button>
-                            <Card style={{ textAlign: "left", background: "transparent", color: "whitesmoke" }}>
+                            <Card style={{ textAlign: "left", background: isAdminRoute ? "lightgray" : "transparent", color: isAdminRoute ? "black" : "whitesmoke" }}>
                                 <CardContent>
                                     <Typography variant="h5" gutterBottom>
                                         Chapitres
@@ -146,22 +150,24 @@ const CourseDetail = ({ isAdmin }) => {
                                                                     <Typography variant="body2" style={{ color: "red" }}>Aucune leçon disponible</Typography>
                                                                 )}
                                                             </List>
-                                                            {isAdmin && ( // Affichage du bouton pour l'admin uniquement
-                                                                <button
-                                                                    onClick={() => showHideModal(chapter)}
-                                                                    className="btn btn-outline-primary"
-                                                                    style={{ float: "right", marginBottom: "15px" }}
-                                                                >
-                                                                    <Add />
-                                                                </button>
-                                                            )}
-                                                            {selectedChapter && selectedChapter.id === chapter.id && isAdmin && (
-                                                                <CreateLessonForm
-                                                                    chapterTitle={selectedChapter.titre}
-                                                                    chapterId={selectedChapter.id}
-                                                                    visible={showed}
-                                                                    onCancel={() => showHideModal()}
-                                                                />
+                                                            {isAdminRoute && (
+                                                                <>
+                                                                    <button
+                                                                        onClick={() => showHideModal(chapter)}
+                                                                        className="btn btn-outline-primary"
+                                                                        style={{ float: "right", marginBottom: "15px" }}
+                                                                    >
+                                                                        <Add />
+                                                                    </button>
+                                                                    {selectedChapter && selectedChapter.id === chapter.id && (
+                                                                        <CreateLessonForm
+                                                                            chapterTitle={selectedChapter.titre}
+                                                                            chapterId={selectedChapter.id}
+                                                                            visible={showed}
+                                                                            onCancel={() => showHideModal()}
+                                                                        />
+                                                                    )}
+                                                                </>
                                                             )}
                                                         </CardContent>
                                                     </Card>
