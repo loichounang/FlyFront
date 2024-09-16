@@ -1,72 +1,58 @@
 import React, { useEffect, useState } from "react";
-import { ListCoursByID } from "../../../services/CoursServices/CoursServices";
-import { ListChaptersByCourseID } from "../../../services/ChapitresServices/ChapitresServices";
-import { ListLessonsByChapterID } from "../../../services/LessonsServices/LessonsServices";
 import { Box, Typography, Grid, Card, CardContent, List, ListItem, ListItemText, CircularProgress, IconButton } from '@mui/material';
-import { Add, ChevronRight, RefreshOutlined } from '@mui/icons-material';
+import { ChevronRight } from '@mui/icons-material';
 import { useParams } from "react-router-dom";
-import CreateLessonForm from "../forms/CreateLessonsForm";
-import { Button } from "antd";
+import { ListCoursByID } from "../../services/CoursServices/CoursServices";
+import { ListChaptersByCourseID } from "../../services/ChapitresServices/ChapitresServices";
+import { ListLessonsByChapterID } from "../../services/LessonsServices/LessonsServices";
 
-const CourseDetail = () => {
+const WebCourseDetails = () => {
     const { courseId } = useParams();
     const [courseData, setCourseData] = useState(null);
     const [courseChapters, setCourseChapters] = useState([]);
     const [chaptersLessons, setChaptersLessons] = useState({});
     const [loading, setLoading] = useState(true);
-    const [showed, setShowed] = useState(false);
-    const [selectedChapter, setSelectedChapter] = useState(null); // État pour stocker le chapitre sélectionné
 
-    function showHideModal(chapter = null) {
-        setSelectedChapter(chapter); // Met à jour le chapitre sélectionné
-        setShowed(!showed);
-    }
-
-    const fetchCoursesDetails = async () => {
-        setLoading(true);
-        try {
-            const courseDetailsResponse = await ListCoursByID(courseId);
-            setCourseData(courseDetailsResponse);
-    
-            // Récupérer les chapitres du cours
-            const chaptersResponse = await ListChaptersByCourseID(courseId);
-            const chaptersInCourse = chaptersResponse.chapitres || []; // Adaptez ici si la réponse contient directement les chapitres
-            console.log('chaptersInCourse:', chaptersInCourse);
-    
-            // Vérifier si chaptersInCourse est un tableau avant de mapper
-            if (Array.isArray(chaptersInCourse)) {
-                setCourseChapters(chaptersInCourse);
-    
-                const lessonsPromises = chaptersInCourse.map(chapter =>
-                    ListLessonsByChapterID(chapter.id).then(lessonsResponse => ({
-                        chapterId: chapter.id,
-                        lessons: Array.isArray(lessonsResponse) ? lessonsResponse : [],
-                    }))
-                );
-    
-                const lessonsResponses = await Promise.all(lessonsPromises);
-                const lessonsByChapter = lessonsResponses.reduce((acc, { chapterId, lessons }) => {
-                    acc[chapterId] = lessons;
-                    return acc;
-                }, {});
-                setChaptersLessons(lessonsByChapter);
-            } else {
-                console.error('chaptersInCourse n\'est pas un tableau:', chaptersInCourse);
-            }
-        } catch (error) {
-            console.error("Erreur lors de la récupération des détails du cours:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-    
-    // Fonction appelée lors du rafraîchissement
-    const handleRefresh = () => {
-        fetchCoursesDetails();
-    };
-    
     // Utilisation dans useEffect pour le chargement initial
     useEffect(() => {
+        const fetchCoursesDetails = async () => {
+            setLoading(true);
+            try {
+                const courseDetailsResponse = await ListCoursByID(courseId);
+                setCourseData(courseDetailsResponse);
+        
+                // Récupérer les chapitres du cours
+                const chaptersResponse = await ListChaptersByCourseID(courseId);
+                const chaptersInCourse = chaptersResponse.chapitres || []; // Adaptez ici si la réponse contient directement les chapitres
+                console.log('chaptersInCourse:', chaptersInCourse);
+        
+                // Vérifier si chaptersInCourse est un tableau avant de mapper
+                if (Array.isArray(chaptersInCourse)) {
+                    setCourseChapters(chaptersInCourse);
+        
+                    const lessonsPromises = chaptersInCourse.map(chapter =>
+                        ListLessonsByChapterID(chapter.id).then(lessonsResponse => ({
+                            chapterId: chapter.id,
+                            lessons: Array.isArray(lessonsResponse) ? lessonsResponse : [],
+                        }))
+                    );
+        
+                    const lessonsResponses = await Promise.all(lessonsPromises);
+                    const lessonsByChapter = lessonsResponses.reduce((acc, { chapterId, lessons }) => {
+                        acc[chapterId] = lessons;
+                        return acc;
+                    }, {});
+                    setChaptersLessons(lessonsByChapter);
+                } else {
+                    console.error('chaptersInCourse n\'est pas un tableau:', chaptersInCourse);
+                }
+            } catch (error) {
+                console.error("Erreur lors de la récupération des détails du cours:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchCoursesDetails();
     }, [courseId]);
 
@@ -122,9 +108,6 @@ const CourseDetail = () => {
                             </Card>
                         </Grid>
                         <Grid item xs={12} md={8}>
-                            <Button onClick={() => handleRefresh()}>
-                                <RefreshOutlined />
-                            </Button>
                             <Card style={{ textAlign: "left", background: "transparent", color: "whitesmoke" }}>
                                 <CardContent>
                                     <Typography variant="h5" gutterBottom>
@@ -154,21 +137,6 @@ const CourseDetail = () => {
                                                                     <Typography variant="body2" style={{ color: "red" }}>Aucune leçon disponible</Typography>
                                                                 )}
                                                             </List>
-                                                            <button
-                                                                onClick={() => showHideModal(chapter)} // Passe le chapitre sélectionné à la fonction
-                                                                className="btn btn-outline-primary"
-                                                                style={{ float: "right", marginBottom: "15px" }}
-                                                            >
-                                                                <Add />
-                                                            </button>
-                                                            {selectedChapter && selectedChapter.id === chapter.id && (
-                                                                <CreateLessonForm
-                                                                    chapterTitle={selectedChapter.titre}
-                                                                    chapterId={selectedChapter.id}
-                                                                    visible={showed}
-                                                                    onCancel={() => showHideModal()}
-                                                                />
-                                                            )}
                                                         </CardContent>
                                                     </Card>
                                                 </Grid>
@@ -187,4 +155,4 @@ const CourseDetail = () => {
     );
 };
 
-export default CourseDetail;
+export default WebCourseDetails;

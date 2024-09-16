@@ -4,8 +4,9 @@ import { useSnackbar } from 'notistack';
 import { ListAllCours } from '../../../services/CoursServices/CoursServices';
 import { ListAllCategories } from '../../../services/CategoriesServices/CategoriesServices';
 import { Button } from "@mui/material";
-import { Book, Category, PeopleAlt } from '@mui/icons-material';
+import { Book, Category, PeopleAlt, Info, Delete, Edit, Refresh } from '@mui/icons-material';
 import { CreateCategories, CreateChapters } from '../forms';
+import { useNavigate } from 'react-router-dom';
 
 const ShowNotification = ({ text, type, duration }) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -15,7 +16,8 @@ const ShowNotification = ({ text, type, duration }) => {
   });
 };
 
-const CoursesManagement = ({ dataColumns }) => {
+const CoursesManagement = () => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,6 +31,52 @@ const CoursesManagement = ({ dataColumns }) => {
   function toggleModal(type) {
     setModals(prev => ({ ...prev, [type]: !prev[type] }));
   }
+
+  const columns = [
+    {title: "ID", dataIndex: "id", key: "id"},
+    {title: "Titre", dataIndex: "titre", key: "titre"},
+    {title: "Auteur", dataIndex: "auteur", key: "auteur"},
+    {title: "Durée (heures)", dataIndex: "durée", key: "durée"},
+    {title: "Catégorie", dataIndex: "category", key: "category"},
+    {
+        title: 'Action',
+        key: 'action',
+        render: (text, record) => (
+            <>
+                {/* Bouton pour rediriger vers les détails */}
+                <Button disabled={!selectedId} onClick={() => handleViewDetails(record.id)}>
+                    <Info style={{ color: "slateblue" }} />
+                </Button>
+                <Button disabled={!selectedId} onClick={() => {/* Fonction de suppression */}}><Delete style={{color: "crimson"}}/></Button>
+                <Button disabled={!selectedId} onClick={() => {/* Fonction de suppression */}}><Edit style={{color: "darkgreen"}}/></Button>
+            </>
+        ),
+    },
+]
+
+  const handleViewDetails = (id) => {
+    // Naviguer vers la page des détails avec l'ID du cours
+    navigate(`/admin/courses/${id}/details`);
+};
+
+const handleRefresh = async () => {
+  setLoading(true);
+  try {
+    const courses = await ListAllCours();
+
+    // Validation basique des données
+    if (Array.isArray(courses)) {
+      setCourses(courses);
+    } else {
+      throw new Error("Les données reçues ne sont pas au format attendu.");
+    }
+  } catch (error) {
+    console.error("Erreur lors de la récupération des cours:", error);
+    ShowNotification("Erreur lors de la récupération des cours", "error", 3000);
+  } finally {
+    setLoading(false);
+  }
+}
 
   useEffect(() => {
     setLoading(true);
@@ -175,6 +223,12 @@ const CoursesManagement = ({ dataColumns }) => {
         >
           Participants <PeopleAlt />
         </Button>
+
+        <Button 
+          onClick={() => handleRefresh()} 
+        >
+           <Refresh />
+        </Button>
         
       </Space>
       <Space style={{ float: "right"}}>
@@ -184,7 +238,7 @@ const CoursesManagement = ({ dataColumns }) => {
           Créer une catégorie <Category />
         </Button>
       </Space>
-      <Table columns={dataColumns} dataSource={currentData} rowKey="id" pagination={false} loading={loading} rowSelection={rowSelection} />
+      <Table columns={columns} dataSource={currentData} rowKey="id" pagination={false} loading={loading} rowSelection={rowSelection} />
       <Pagination
         current={currentPage}
         pageSize={pageSize}

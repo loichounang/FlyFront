@@ -96,7 +96,7 @@ const CategoriesPage = () => {
         <Grid container spacing={4}>
         {loading ? <Spinner /> : (
             categories.map((category) => {
-              console.log(category.cours_image); // Vérifie si l'URL est bien définie
+              console.log(category.image); // Vérifie si l'URL est bien définie
               return (
                 <Grid item xs={12} sm={6} md={3} key={category.id}>
                 <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} className='coursesCard'>

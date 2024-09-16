@@ -1,8 +1,9 @@
-import { Modal, Form, Input } from "antd";
+import { Modal, Form, Input, Button, Upload } from "antd";
 import React, { useState } from "react";
 import { Spinner } from "react-bootstrap";
 import { CreateCategoriesAPI } from "../../../services/CategoriesServices/CategoriesServices";
 import useNotification from "../../common/UseNotification";
+import { UploadOutlined } from "@ant-design/icons";
 
 const CreateCategoryForm = ({ visible, onCreate, onCancel, contentURL }) => {
   const [form] = Form.useForm();
@@ -11,10 +12,22 @@ const CreateCategoryForm = ({ visible, onCreate, onCancel, contentURL }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const notify = useNotification();
 
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-  }
-
+  const handleFileChange = ({ fileList }) => {
+    // fileList contient les fichiers sélectionnés
+    // Assurez-vous de mettre à jour l'état ou le formulaire en conséquence
+    // Ici, on suppose que vous voulez gérer le premier fichier de la liste
+    const file = fileList[0]?.originFileObj;
+    setSelectedFile(file);
+  };
+  
+  // Optionnel : pour extraire le fichier depuis l'événement
+  const getFileFromEvent = (e) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.fileList;
+  };
+  
   const handleFinish = async (values) => {
     setLoading(true);
     try {
@@ -48,7 +61,7 @@ const CreateCategoryForm = ({ visible, onCreate, onCancel, contentURL }) => {
         const integrityConstraint = error.response?.name
         switch (status) {
           case 400:
-            notify(integrityConstraint !== "" ? integrityConstraint: "Une catégorie avec ce nom existe déjà", "error", 5000);
+            notify(integrityConstraint ||  "Une catégorie avec ce nom existe déjà", "error", 5000);
             break;
         
           default:
@@ -89,6 +102,7 @@ const CreateCategoryForm = ({ visible, onCreate, onCancel, contentURL }) => {
           form={form}
           layout="vertical"
           name="create_category"
+          encType="multipart/form-data"
           onFinish={handleFinish}
           style={{ padding: 20 }}
         >
@@ -112,9 +126,18 @@ const CreateCategoryForm = ({ visible, onCreate, onCancel, contentURL }) => {
           <Form.Item
             name="image"
             label="Image"
-            rules={[{ required: false }]}
+            valuePropName="file"
+            getValueFromEvent={getFileFromEvent}
           >
-            <Input type="file" name="image" onChange={handleFileChange}/>
+            <Upload
+              maxCount={1}
+              listType="picture"
+              beforeUpload={() => false} // Prevent automatic upload
+              accept="image/*"
+              onChange={handleFileChange}
+            >
+              <Button icon={<UploadOutlined />}>Télécharger une image</Button>
+            </Upload>
           </Form.Item>
         </Form>
       </div>

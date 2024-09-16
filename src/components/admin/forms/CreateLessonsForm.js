@@ -1,48 +1,54 @@
-// CreateLessonForm.js
-import { Modal, Form, Input, Upload, Select, Button } from "antd";
+import { Modal, Form, Input, Upload, Button } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-//import axios from "axios";
-import React, { useEffect, useState } from "react";
-//import APIBaseURL from "../../../services/ApiServices";
+import React, { useState } from "react";
+import { CreateLessonsAPI } from "../../../services/LessonsServices/LessonsServices";
+import useNotification from "../../common/UseNotification";
 
-const CreateLessonForm = ({ visible, onCreate, onCancel, contentURL }) => {
+const CreateLessonForm = ({ visible, onCancel, chapterId, chapterTitle }) => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [chaptersList, setChaptersList] = useState([]);
+  const notify = useNotification();
 
-  const handleFinish = (values) => {
+  const handleFinish = async (values) => {
+    setLoading(true);
+    setErrorMessage("");
+
     const formData = new FormData();
+
+    // Append form values to FormData
     Object.entries(values).forEach(([key, value]) => {
-      if (value instanceof File) {
-        formData.append(key, value.originFileObj);
+      if (value && value.file) {
+        // For file inputs
+        formData.append(key, value.file.originFileObj);
       } else {
+        // For other inputs
         formData.append(key, value);
       }
     });
 
-    // Appeler une API ou gérer la création de la leçon ici
-    /*axios
-      .post("http://" + APIBaseURL + contentURL, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then(() => {
-        onCreate(values);
-        form.resetFields();
-      })
-      .catch((error) => {
-        setErrorMessage("Erreur lors de la création de la leçon");
-      });*/
-  };
+    // Append chapterId to FormData
+    formData.append("chapitre", chapterId);
 
-  // Récupérer la liste des chapitres disponibles
-  useEffect(() => {
-    const chaptersData = [
-      { id: 1, titre: "Chapitre 1" },
-      { id: 2, titre: "Chapitre 2" },
-      { id: 3, titre: "Chapitre 3" },
-    ];
-    setChaptersList(chaptersData);
-  }, []);
+    // Append lien_video only if a URL is provided
+    if (values.lien_video) {
+      formData.append('lien_video', values.lien_video);
+    }
+
+    try {
+      const createLessons = await CreateLessonsAPI(formData);
+      if (createLessons >= 200 && createLessons < 300) {
+        notify("Nouvelle leçon ajoutée", "success", 3000);
+        form.resetFields();
+        onCancel(); // Close the modal after successful creation
+      }
+    } catch (error) {
+      setErrorMessage("Erreur lors de la création de la leçon");
+      console.error("Error creating lesson:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Modal
@@ -50,6 +56,7 @@ const CreateLessonForm = ({ visible, onCreate, onCancel, contentURL }) => {
       title="Créer une nouvelle leçon"
       okText="Créer"
       cancelText="Annuler"
+      confirmLoading={loading}
       onCancel={() => {
         onCancel();
         form.resetFields();
@@ -67,7 +74,7 @@ const CreateLessonForm = ({ visible, onCreate, onCancel, contentURL }) => {
       }}
       centered
     >
-      <Form form={form} layout="vertical" name="create_lesson" onFinish={handleFinish}>
+      <Form form={form} layout="vertical" name="create_lesson" onFinish={handleFinish} encType="multipart/form-data">
         {errorMessage && <span style={{ color: "red" }}>{errorMessage}</span>}
 
         <Form.Item
@@ -111,7 +118,21 @@ const CreateLessonForm = ({ visible, onCreate, onCancel, contentURL }) => {
         </Form.Item>
 
         <Form.Item
-          name="fichier_détails"
+          name="duree"
+          label="Durée (HH:MM:SS)"
+          rules={[
+            { required: true, message: "Veuillez indiquer la durée de la leçon au format HH:MM:SS" },
+            {
+              pattern: /^([0-9]{2}):([0-9]{2}):([0-9]{2})$/,
+              message: "Le format doit être HH:MM:SS"
+            }
+          ]}
+        >
+          <Input placeholder="Durée de la leçon (ex: 01:30:00)" />
+        </Form.Item>
+
+        <Form.Item
+          name="fichier_details"
           label="Fichier Détails"
           valuePropName="file"
           getValueFromEvent={(e) => (Array.isArray(e) ? e[0] : e?.file)}
@@ -126,17 +147,10 @@ const CreateLessonForm = ({ visible, onCreate, onCancel, contentURL }) => {
         </Form.Item>
 
         <Form.Item
-          name="chapitre"
           label="Chapitre associé"
           rules={[{ required: true, message: "Sélectionnez un chapitre" }]}
         >
-          <Select placeholder="Sélectionnez un chapitre">
-            {chaptersList.map((chapter) => (
-              <Select.Option key={chapter.id} value={chapter.id}>
-                {chapter.titre}
-              </Select.Option>
-            ))}
-          </Select>
+          <Input disabled value={chapterTitle} />
         </Form.Item>
       </Form>
     </Modal>

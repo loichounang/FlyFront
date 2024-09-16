@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Card, CardMedia, CardContent, Rating, InputBase, Paper, IconButton } from '@mui/material';
+import { Box, Typography, Grid, Card, CardMedia, CardContent, Rating, InputBase, Paper, IconButton, Button } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 
 // import courseImage1 from '../../assets/images/courseImage1.png'; // Example image
@@ -11,14 +11,22 @@ import { Spinner } from 'react-bootstrap';
 import { submitRating } from '../../services/RatingServices/RatingServices';
 import useNotification from '../../components/common/UseNotification';
 import "../../assets/styles/CoursesCard.css";
+import { useNavigate } from 'react-router-dom';
 
 
 const CoursesPage = () => {
+  const navigate = useNavigate();
   const notify = useNotification();
   const [loading, setLoading] = useState(true);
   const [courses, setCourses] = useState([]);
   const [rating, setRating] = useState(0);
   const courseCount = courses.length;
+
+
+  const handleViewDetails = (id) => {
+    // Naviguer vers la page des détails avec l'ID du cours
+    navigate(`/mes-cours/${id}/details`);
+  };
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -154,6 +162,10 @@ const CoursesPage = () => {
                       onChange={(event, newValue) => setRating(newValue)}
                       onClick={() => handleRatingChange(rating,course.id)}
                     />
+                    <br />
+                    <Button style={{float: "right"}} onClick={() => handleViewDetails(course.id)}>
+                      Voir le contenu
+                    </Button>
                   </CardContent>
                 </Card>
               </Grid>

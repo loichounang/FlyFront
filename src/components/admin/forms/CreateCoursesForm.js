@@ -1,13 +1,12 @@
-import { Modal, Form, Input, Select, InputNumber } from "antd";
+import { Modal, Form, Input, Select } from "antd";
 import React, { useState } from "react";
 import { CreateCours } from "../../../services/CoursServices/CoursServices";
-import {Spinner} from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
 import { ListAllCategories } from "../../../services/CategoriesServices/CategoriesServices";
 import { ListAllAdministrators } from "../../../services/UsersServices/UsersServices";
 import useNotification from "../../common/UseNotification";
 
-const CreateCoursesForm = ({visible, onCancel}) => {
-
+const CreateCoursesForm = ({ visible, onCancel }) => {
     const notify = useNotification();
     const [form] = Form.useForm();
     const [errorMessage, setErrorMessage] = useState("");
@@ -17,7 +16,9 @@ const CreateCoursesForm = ({visible, onCancel}) => {
     const [selectedFile, setSelectedFile] = useState(null);
 
     const handleFileChange = (e) => {
-        setSelectedFile(e.target.files[0]); // Récupérer le fichier sélectionné
+        const file = e.target.files[0];
+        console.log("Fichier sélectionné:", file);
+        setSelectedFile(file);
     };
 
     const handleFinish = async (values) => {
@@ -30,21 +31,30 @@ const CreateCoursesForm = ({visible, onCancel}) => {
             formData.append('description', values.description);
             formData.append('auteur', values.auteur);
             formData.append('objectifs', values.objectifs);
-            formData.append('durée', values.durée);
-            formData.append('catégorie', values.catégorie);
+            formData.append('categorie', values.categorie);
             
             // Ajouter l'image sélectionnée (si présente)
             if (selectedFile) {
-                formData.append('cours_image', selectedFile);
+                console.log("Image ajoutée à FormData:", selectedFile);
+                formData.append('image', selectedFile);  // Envoi du fichier image
             }
         
             // Ajouter lien_video seulement si une URL est fournie
             if (values.lien_video) {
                 formData.append('lien_video', values.lien_video);
             }
+
+             // Log pour voir ce qui est ajouté à formData
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
         
-            const response = await CreateCours(formData);
-    
+            const response = await CreateCours(formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });  // Envoi via Axios
+        
             if (response >= 200 && response <= 300) {
                 notify("Le nouveau cours a été ajouté avec succès", "success", 5000);
             } else {
@@ -61,25 +71,21 @@ const CreateCoursesForm = ({visible, onCancel}) => {
     const fetchAdministrators = async () => {
         try {
             const response = await ListAllAdministrators(localStorage.getItem("uid"));
-                console.log('Administrators Response:', response);
-                setAdminList(Array.isArray(response) ? response : []);
+            setAdminList(Array.isArray(response) ? response : []);
         } catch (error) {
-                console.error('Error Fetching Administrators:', error);
-                notify("Une erreur est survenue lors de la récupération des administrateurs", "error", 3000);
+            notify("Une erreur est survenue lors de la récupération des administrateurs", "error", 3000);
         }
     };
 
     const fetchCategories = async () => {
         try {
             const response = await ListAllCategories();
-                console.log('Categories Response:', response);
-                setCoursesCategories(Array.isArray(response) ? response : []);
+            setCoursesCategories(Array.isArray(response) ? response : []);
         } catch (error) {
-                console.error('Error Fetching Categories:', error);
-                notify("Une erreur est survenue lors de la récupération des catégories", "error", 3000);
+            notify("Une erreur est survenue lors de la récupération des catégories", "error", 3000);
         }
     };
-    
+
     return (
         <Modal
             open={visible}
@@ -94,17 +100,17 @@ const CreateCoursesForm = ({visible, onCancel}) => {
             }}
             onOk={() => {
                 form
-                .validateFields()
-                .then((values) => {
-                    handleFinish(values);
-                }).catch((info) => {
-                    console.log('Validation Failed:', info);
-                });
+                    .validateFields()
+                    .then((values) => {
+                        handleFinish(values);
+                    })
+                    .catch((info) => {
+                        console.log("Validation Failed:", info);
+                    });
             }}
-            styles={{ padding: '0' }}
             centered
         >
-            <div style={{ animation: "gradient 5s ease infinite", padding: "15px", color: "var(--courses-form-color)"}}>
+            <div>
                 <Form
                     form={form}
                     layout="horizontal"
@@ -112,12 +118,8 @@ const CreateCoursesForm = ({visible, onCancel}) => {
                     onFinish={handleFinish}
                     encType="multipart/form-data"
                 >
-                    {errorMessage !== "" ? (
-                        <span style={{color: "red"}}>{errorMessage}</span>
-                    ) : (
-                        <p >
-                        </p>
-                    )}
+                    {errorMessage && <span style={{color: "red"}}>{errorMessage}</span>}
+                    
                     <Form.Item
                         name="titre"
                         label="Titre du cours"
@@ -129,31 +131,21 @@ const CreateCoursesForm = ({visible, onCancel}) => {
                     <Form.Item
                         name="description"
                         label="Description"
-                        rules={[{ required: true, message: 'Veuillez fournir une description du contenu du cours', }]}
+                        rules={[{ required: true, message: 'Veuillez fournir une description du contenu du cours' }]}
                     >
-                        <Input.TextArea placeholder="Description" rows={4}/>
+                        <Input.TextArea placeholder="Description" rows={4} />
                     </Form.Item>
 
                     <Form.Item
                         name="auteur"
                         label="Auteur du cours"
-                        rules={[{ required: true, message: 'Selectionnez un utilisateur' }]}
+                        rules={[{ required: true, message: 'Sélectionnez un utilisateur' }]}
                     >
-                        <Select onClick={() => fetchAdministrators()}>
-                            {adminList.map((user, index) => {
-                                return (
-                                    <Select.Option key={index} value={user.id}>{user.nom} {user.prénom}</Select.Option>
-                                )
-                            })}
+                        <Select onClick={fetchAdministrators}>
+                            {adminList.map((user, index) => (
+                                <Select.Option key={index} value={user.id}>{user.nom} {user.prénom}</Select.Option>
+                            ))}
                         </Select>
-                    </Form.Item>
-
-                    <Form.Item
-                        name="fichier"
-                        label="Pièce Jointe"
-                        rules={[{ required: false }]}
-                    >
-                        <Input type="file" placeholder="Ajoutez une pièce jointe à votre cours" />
                     </Form.Item>
 
                     <Form.Item
@@ -161,47 +153,37 @@ const CreateCoursesForm = ({visible, onCancel}) => {
                         label="Objectifs"
                         rules={[{ required: true, message: 'Veuillez lister les objectifs du cours' }]}
                     >
-                        <Input placeholder="Entrez les objectifs séparés par une virgule" aria-multiline="true" />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="durée"
-                        label="Durée du cours"
-                        rules={[{ required: true }]}
-                    >
-                        <InputNumber />
+                        <Input placeholder="Entrez les objectifs séparés par une virgule" />
                     </Form.Item>
 
                     <Form.Item
                         name="lien_video"
                         label="Lien Vidéo"
-                        rules={[{ required: false}]}
+                        rules={[{ required: false }]}
                     >
-                        <Input placeholder="Lien vers le cours vidéo"/>
+                        <Input placeholder="Lien vers le cours vidéo" />
                     </Form.Item>
 
                     <Form.Item
-                        name="catégorie"
+                        name="categorie"
                         label="Catégorie"
-                        rules={[{ required: true, message: "Vous devez selectionner une catégorie d'appartenance pour ce cours"}]}
+                        rules={[{ required: true, message: 'Veuillez sélectionner une catégorie pour ce cours' }]}
                     >
-                        <Select placeholder="Selectionnez une catégorie pour le cours" onClick={() => fetchCategories()}>
-                            {coursesCategories.map((category, index) => {
-                                return (
-                                    <Select.Option key={index} value={category.id}>
-                                        {category.name}
-                                    </Select.Option>
-                                )
-                            })}
+                        <Select placeholder="Sélectionnez une catégorie" onClick={fetchCategories}>
+                            {coursesCategories.map((category, index) => (
+                                <Select.Option key={index} value={category.id}>
+                                    {category.name}
+                                </Select.Option>
+                            ))}
                         </Select>
                     </Form.Item>
 
                     <Form.Item
-                        name="cours_image"
+                        name="image"
                         label="Image du cours"
                         rules={[{ required: false }]}
                     >
-                        <Input type="file" name="cours_image" onChange={handleFileChange} />
+                        <Input type="file" onChange={handleFileChange} />
                     </Form.Item>
                 </Form>
             </div>

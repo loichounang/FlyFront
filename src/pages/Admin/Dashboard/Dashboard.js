@@ -86,7 +86,7 @@ const Dashboard = () => {
 
                                 <div className="col-4">
                                     <RechartsPieChart
-                                        contentURL="api/cours/catégories/list-all"
+                                        contentURL="api/cours/categories/list-all"
                                         chartName="Répartition des cours"
                                     />
                                 </div>
