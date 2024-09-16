@@ -1,5 +1,4 @@
-import { HomePage, ForumPage, CoursesPage, CategoriesPage, CoursesDetailsPage } from "../pages";
-import { Dashboard, UsersAdminPage, CoursAdminPage, CoursDetailsAdminPage } from "../pages";
+import { Dashboard, UsersAdminPage, CoursAdminPage, CoursDetailsAdminPage, HomePage, ForumPage, CoursesPage, CategoriesPage } from "../pages";
 
 const routes = [
     {
@@ -18,11 +17,16 @@ const routes = [
         layout: 'admin',
     },
     {
-        path: `/admin/courses/:courseId/details`,
-        component: CoursDetailsAdminPage,
+        path: '/admin/courses/:courseId/details',
+        component: () => <CoursDetailsAdminPage isAdmin={true} />,
         layout: 'admin',
     },
-    
+
+    {
+        path: '/mes-cours/:courseId/details',
+        component: () => <CoursDetailsAdminPage isAdmin={false} />,
+        layout: 'web',
+    },
     {
         path: '/',
         component: HomePage,
@@ -41,11 +45,6 @@ const routes = [
     {
         path: '/forum',
         component: ForumPage,
-        layout: 'web',
-    },
-    {
-        path: `/mes-cours/:courseId/details`,
-        component: CoursesDetailsPage,
         layout: 'web',
     },
 ];

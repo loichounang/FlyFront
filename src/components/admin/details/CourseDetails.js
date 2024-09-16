@@ -8,17 +8,17 @@ import { useParams } from "react-router-dom";
 import CreateLessonForm from "../forms/CreateLessonsForm";
 import { Button } from "antd";
 
-const CourseDetail = () => {
+const CourseDetail = ({ isAdmin }) => {
     const { courseId } = useParams();
     const [courseData, setCourseData] = useState(null);
     const [courseChapters, setCourseChapters] = useState([]);
     const [chaptersLessons, setChaptersLessons] = useState({});
     const [loading, setLoading] = useState(true);
     const [showed, setShowed] = useState(false);
-    const [selectedChapter, setSelectedChapter] = useState(null); // État pour stocker le chapitre sélectionné
+    const [selectedChapter, setSelectedChapter] = useState(null);
 
     function showHideModal(chapter = null) {
-        setSelectedChapter(chapter); // Met à jour le chapitre sélectionné
+        setSelectedChapter(chapter);
         setShowed(!showed);
     }
 
@@ -28,12 +28,8 @@ const CourseDetail = () => {
             const courseDetailsResponse = await ListCoursByID(courseId);
             setCourseData(courseDetailsResponse);
     
-            // Récupérer les chapitres du cours
             const chaptersResponse = await ListChaptersByCourseID(courseId);
-            const chaptersInCourse = chaptersResponse.chapitres || []; // Adaptez ici si la réponse contient directement les chapitres
-            console.log('chaptersInCourse:', chaptersInCourse);
-    
-            // Vérifier si chaptersInCourse est un tableau avant de mapper
+            const chaptersInCourse = chaptersResponse.chapitres || [];
             if (Array.isArray(chaptersInCourse)) {
                 setCourseChapters(chaptersInCourse);
     
@@ -50,8 +46,6 @@ const CourseDetail = () => {
                     return acc;
                 }, {});
                 setChaptersLessons(lessonsByChapter);
-            } else {
-                console.error('chaptersInCourse n\'est pas un tableau:', chaptersInCourse);
             }
         } catch (error) {
             console.error("Erreur lors de la récupération des détails du cours:", error);
@@ -59,13 +53,11 @@ const CourseDetail = () => {
             setLoading(false);
         }
     };
-    
-    // Fonction appelée lors du rafraîchissement
+
     const handleRefresh = () => {
         fetchCoursesDetails();
     };
-    
-    // Utilisation dans useEffect pour le chargement initial
+
     useEffect(() => {
         fetchCoursesDetails();
     }, [courseId]);
@@ -122,7 +114,7 @@ const CourseDetail = () => {
                             </Card>
                         </Grid>
                         <Grid item xs={12} md={8}>
-                            <Button onClick={() => handleRefresh()}>
+                            <Button onClick={handleRefresh}>
                                 <RefreshOutlined />
                             </Button>
                             <Card style={{ textAlign: "left", background: "transparent", color: "whitesmoke" }}>
@@ -154,14 +146,16 @@ const CourseDetail = () => {
                                                                     <Typography variant="body2" style={{ color: "red" }}>Aucune leçon disponible</Typography>
                                                                 )}
                                                             </List>
-                                                            <button
-                                                                onClick={() => showHideModal(chapter)} // Passe le chapitre sélectionné à la fonction
-                                                                className="btn btn-outline-primary"
-                                                                style={{ float: "right", marginBottom: "15px" }}
-                                                            >
-                                                                <Add />
-                                                            </button>
-                                                            {selectedChapter && selectedChapter.id === chapter.id && (
+                                                            {isAdmin && ( // Affichage du bouton pour l'admin uniquement
+                                                                <button
+                                                                    onClick={() => showHideModal(chapter)}
+                                                                    className="btn btn-outline-primary"
+                                                                    style={{ float: "right", marginBottom: "15px" }}
+                                                                >
+                                                                    <Add />
+                                                                </button>
+                                                            )}
+                                                            {selectedChapter && selectedChapter.id === chapter.id && isAdmin && (
                                                                 <CreateLessonForm
                                                                     chapterTitle={selectedChapter.titre}
                                                                     chapterId={selectedChapter.id}

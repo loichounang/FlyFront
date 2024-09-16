@@ -8,4 +8,4 @@ export { default as HomePage } from "./Web/HomePage";
 export { default as ForumPage } from "./Web/ForumPage";
 export { default as CoursesPage } from "./Web/CoursesPage";
 export { default as CategoriesPage } from "./Web/CategoriesPage";
-export { default as CoursesDetailsPage } from "./Web/CoursesDetailsPage";
+export { default as CourseDetailsPage } from "./Web/CoursesDetailsPage";
