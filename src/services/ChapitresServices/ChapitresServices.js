@@ -5,7 +5,7 @@ import { BASE_URL, COURS_API, requestsConfig } from "../ApiServices";
 export const ListAllChapters = async () => {
     
     try {
-        const response = await axios.get(`${BASE_URL}/${COURS_API}/chapitres`, requestsConfig);
+        const response = await axios.get(`${BASE_URL}/${COURS_API}/chapitres`);
         console.log(response.data);
         return response.data;
     } catch (error) {
@@ -23,7 +23,7 @@ export const ListAllChapters = async () => {
 export const ListChaptersByID = async (id) => {
 
     try {
-        const response = await axios.get(`${BASE_URL}/${COURS_API}/chapitres/${id}`, requestsConfig);
+        const response = await axios.get(`${BASE_URL}/${COURS_API}/chapitres/${id}`);
         return response.data;
     } catch (error) {
         const status = error.response?.status;
@@ -38,7 +38,7 @@ export const ListChaptersByID = async (id) => {
 // @List Chapters By Course ID
 export const ListChaptersByCourseID = async (coursId) => {
     try {
-        const response = await axios.get(`${BASE_URL}/${COURS_API}/chapitre/?coursId=${coursId}`, requestsConfig);
+        const response = await axios.get(`${BASE_URL}/${COURS_API}/chapitre/?coursId=${coursId}`);
         return response.data;
     } catch (error) {
         console.error("Erreur lors de la récupération des chapitres:", error);

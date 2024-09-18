@@ -5,7 +5,7 @@ import { BASE_URL, COURS_API, createWithImageConfig, requestsConfig } from "../A
 export const ListAllCategories = async () => {
     
     try {
-        const response = await axios.get(`${BASE_URL}/${COURS_API}/categories/list-all`, requestsConfig);
+        const response = await axios.get(`${BASE_URL}/${COURS_API}/categories/list-all`);
         console.log(response.data);
         return response.data;
     } catch (error) {
@@ -23,7 +23,7 @@ export const ListAllCategories = async () => {
 export const ListCategoriesByID = async (id) => {
 
     try {
-        const response = await axios.get(`${BASE_URL}/${COURS_API}/categories/${id}`, requestsConfig);
+        const response = await axios.get(`${BASE_URL}/${COURS_API}/categories/${id}`);
         return response.data;
     } catch (error) {
         const status = error.response?.status;

@@ -3,11 +3,16 @@ import { Table, Input, Select, Checkbox, Pagination } from 'antd';
 import axios from 'axios';
 //import APIBaseURL from '../../../services/ApiServices';
 import { useSnackbar } from 'notistack';
+import { ListAllUsers } from '../../../services/UsersServices/UsersServices';
+import useNotification from '../../common/UseNotification';
+import { Button } from 'react-bootstrap';
+import { Refresh } from '@mui/icons-material';
 //import { Spinner } from 'react-bootstrap';
 
 const { Option } = Select;
 
 const UserManagement = ({dataColumns}) => {
+  const notify = useNotification();
   const {enqueueSnackbar} = useSnackbar();
   const [users, setUsers] = useState([]); // Liste initiale des utilisateurs
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -41,6 +46,15 @@ const UserManagement = ({dataColumns}) => {
     setCurrentPage(page);
     setPageSize(pageSize);
   };
+
+  const handleRefresh = async () => {
+    try {
+      const response = await ListAllUsers();
+      setFilteredUsers(response);
+    } catch (error) {
+      notify("Impossible d'actualiser", "error", 3000);
+    }
+  }
 
   const currentData = filteredUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
@@ -135,6 +149,9 @@ const UserManagement = ({dataColumns}) => {
         style={{ marginBottom: 20 }}
       />
       <div style={{ marginBottom: 20 }}>
+        <Button onClick={() => handleRefresh()} style={{float: "left"}}>
+          <Refresh />
+        </Button>
         <Select placeholder="Filtrer par rôle" onChange={handleRoleFilter} style={{ width: 200, marginRight: 10 }}>
           <Option value="administrateur">Administrateur</Option>
           <Option value="ambassadeur">Ambassadeur</Option>

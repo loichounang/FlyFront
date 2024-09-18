@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -12,13 +12,22 @@ import {
   ListItemText,
 } from '@mui/material';
 import { Search as SearchIcon, Menu as MenuIcon, Person as PersonIcon } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 import LoginModal from './LoginForm';
+import axios from 'axios';
 
 const MainNav = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication status
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check authentication status on component mount
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token);
+  }, []);
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -27,20 +36,60 @@ const MainNav = () => {
     setDrawerOpen(open);
   };
 
+  const clearData = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refresh');
+  };
+
+  const handleLoginLogout = async () => {
+    if (isAuthenticated) {
+      // Handle logout
+      try {
+        const token = localStorage.getItem('token');
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        await axios.post(
+          "http://127.0.0.1:8000/api/utilisateurs/logout/", 
+          { refresh_token: localStorage.getItem("refresh") }, 
+          config
+        );
+
+        clearData();
+        setIsAuthenticated(false);
+        navigate('/'); // Redirect to home or login page
+      } catch (error) {
+        const status = error.response?.status;
+        const data = error.response?.data;
+
+        let message = 'Erreur inconnue lors de la déconnexion. Veuillez réessayer.';
+        if (status === 500) {
+          message = "Echec de la déconnexion. Une erreur serveur s'est produite.";
+        } else if (status === 404) {
+          message = "Le chemin est introuvable.";
+        } else if (status === 403) {
+          message = data.detail || 'Accès refusé.';
+        }
+
+        console.error(message);
+        alert(message); // Simple alert for errors; you might want to use a more sophisticated notification system
+      }
+    } else {
+      // Handle login
+      setLoginOpen(true);
+    }
+  };
+
+  const closeLogin = () => setLoginOpen(false);
+
   const menuItems = [
     { text: 'Mes cours', link: '/mes-cours' },
     { text: 'Catégories', link: '/mes-catégories' },
     { text: 'Team', link: '#' },
   ];
-
-  // Fonctions pour afficher et cacher le modal
-  function openLogin() {
-    setLoginOpen(true);
-  }
-
-  function closeLogin() {
-    setLoginOpen(false);
-  }
 
   return (
     <AppBar
@@ -84,7 +133,7 @@ const MainNav = () => {
             </Button>
           ))}
           <Button
-            onClick={() => openLogin()}
+            onClick={handleLoginLogout}
             variant="contained"
             sx={{
               backgroundColor: '#66bfbe',
@@ -93,12 +142,12 @@ const MainNav = () => {
               fontFamily: 'Poppins, sans-serif', // Apply Poppins font
             }}
           >
-            Se connecter
+            {isAuthenticated ? 'Se déconnecter' : 'Se connecter'}
           </Button>
         </Box>
         <LoginModal 
             show={loginOpen}
-            handleClose={() => closeLogin()}
+            handleClose={closeLogin}
           />
 
         {/* Mobile Menu */}
@@ -119,8 +168,9 @@ const MainNav = () => {
                     <ListItemText primary={item.text} />
                   </ListItem>
                 ))}
-                <ListItem button>
+                <ListItem button onClick={handleLoginLogout}>
                   <PersonIcon />
+                  <ListItemText primary={isAuthenticated ? 'Se déconnecter' : 'Se connecter'} />
                 </ListItem>
               </List>
             </Box>
@@ -128,7 +178,7 @@ const MainNav = () => {
           <IconButton>
             <SearchIcon />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleLoginLogout}>
             <PersonIcon />
           </IconButton>
         </Box>

@@ -7,7 +7,7 @@ import { ListUsersByID } from "../UsersServices/UsersServices";
 export const ListAllCours = async () => {
     
     try {
-        const response = await axios.get(`${BASE_URL}/${COURS_API}/cours`, requestsConfig);
+        const response = await axios.get(`${BASE_URL}/${COURS_API}/cours`);
         console.log(response.data); // Vérifie si c'est bien un tableau
         const courses = response.data;
 
@@ -51,7 +51,7 @@ export const ListAllCours = async () => {
 export const ListCoursByID = async (id) => {
     try {
         // Récupérer les détails du cours
-        const response = await axios.get(`${BASE_URL}/${COURS_API}/cours/${id}`, requestsConfig);
+        const response = await axios.get(`${BASE_URL}/${COURS_API}/cours/${id}`);
         const course = response.data;
 
         // Récupération des détails de la catégorie et de l'auteur en parallèle

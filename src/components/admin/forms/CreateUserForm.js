@@ -1,48 +1,87 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Select } from 'antd';
-//import axios from 'axios';
-//import APIBaseURL from '../../../services/ApiServices';
+import { Modal, Form, Input, Select, Spin, Button } from 'antd';
+import { ListUsersRoles, CreateUser } from '../../../services/UsersServices/UsersServices';
+import UseNotification from '../../common/UseNotification'; // Assurez-vous que cette importation est correcte
 
 const { Option } = Select;
 
-const CreateUserModal = ({ visible, onCreate, onCancel, theme, contentURL }) => {
+const CreateUserModal = ({ visible, onCreate, onCancel }) => {
   const [form] = Form.useForm();
-  const [teamsList, setTeamList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [roles, setRoles] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const handleFinish = (values) => {
-    // Appeler une API ou gérer la création d'utilisateur ici
-    onCreate(values);
+  const notify = UseNotification(); // Déplacez cette ligne après l'importation
+
+  const handleFinish = async (values) => {
+    try {
+      setLoading(true);
+  
+      const formData = new FormData();
+      formData.append('nom', values.nom);
+      formData.append('prénom', values.prénom);
+      formData.append('email', values.email);
+      formData.append('password', values.password);
+      formData.append('role', values.role);
+      formData.append('statut', values.status);
+      
+      const postResponse = await CreateUser(formData);
+  
+      console.log("Response Status:", postResponse.status); // Debug
+      if (postResponse >= 200 && postResponse <= 300) {
+        console.log("Notification Called"); // Debug
+        notify("Utilisateur créé avec succès", "success", 3000);
+        setSuccessMessage("Utilisateur créé avec succès!");
+        onCreate(values);
+        form.resetFields();
+      } else {
+        notify("Échec de la création de l'utilisateur", "error", 3000);
+        throw new Error("Échec de la création de l'utilisateur");
+      }
+    } catch (error) {
+      setErrorMessage("Une erreur est survenue lors de la création de l'utilisateur", error);
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      setLoading(true);
+      try {
+        const rolesResponse = await ListUsersRoles();
+        const RolesList = Object.entries(rolesResponse).map(([key, value]) => ({ value: key, label: value }));
+        setRoles(RolesList);
+      } catch (error) {
+        console.error("Une erreur est survenue lors de la récupération des rôles", error);
+        setErrorMessage("Une erreur est survenue lors de la récupération des rôles");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRoles();
+  }, []);
+
+  const handleCancel = () => {
+    setErrorMessage("");
+    setSuccessMessage("");
+    onCancel();
     form.resetFields();
   };
 
-  useEffect(() => {
-    /*const FetchTeams = async() => {
-      try {
-        const teamsResponse = await axios.get("http://" + APIBaseURL + contentURL);
-        if(teamsResponse.status >= 200 && teamsResponse.status <= 300) {
-          setTeamList(teamsResponse.data);
-        }
-      } catch (error) {
-        switch (error.response?.status) {
-          case 500:
-            setErrorMessage("Erreur interne du serveur lors de la récupération de la liste des équipes");
-            break;
-          case 404:
-            setErrorMessage("Nous ne parvenons pas à trouver la liste des équipes à cette adresse. Veuillez consulter un administrateur pour en obtenir une nouvelle");
-            break;
-          case 403:
-            setErrorMessage("Vous ne pouvez pas accéder à la liste des équipes car vous n'avez pas les droits suffisants");
-            break;
-        
-          default:
-            break;
-        }
-      }
-    }
-
-    FetchTeams();*/
-  }, [contentURL]);
+  const handleOk = () => {
+    form.validateFields()
+      .then(values => {
+        handleFinish(values);
+      })
+      .catch(info => {
+        console.log('Validation Failed:', info);
+      });
+  };
 
   return (
     <Modal
@@ -50,45 +89,44 @@ const CreateUserModal = ({ visible, onCreate, onCancel, theme, contentURL }) => 
       title="Créer un utilisateur"
       okText="Créer"
       cancelText="Annuler"
-      onCancel={() => {
-        onCancel();
-        form.resetFields();
-        setErrorMessage("");
-      }}
-      onOk={() => {
-        form
-          .validateFields()
-          .then((values) => {
-            handleFinish(values);
-          })
-          .catch((info) => {
-            console.log('Validation Failed:', info);
-          });
-      }}
-      styles={{ padding: '0' }}
+      onCancel={handleCancel}
+      onOk={handleOk}
       centered
+      footer={[
+        <Button key="cancel" onClick={handleCancel}>Annuler</Button>,
+        <Button key="submit" type="primary" onClick={handleOk}>
+          {loading ? <Spin /> : 'Créer'}
+        </Button>
+      ]}
     >
-      <div>
+      {loading ? (
+        <Spin />
+      ) : (
         <Form
           form={form}
           layout="vertical"
           name="create_user"
           initialValues={{ role: 'user', status: 'active' }}
-          onFinish={handleFinish}
         >
-          {errorMessage !== "" ? (
-            <span style={{color: "red"}}>{errorMessage}</span>
-          ) : (
-            <p >
-              
-            </p>
+          {errorMessage && (
+            <span style={{ color: "red", marginBottom: "15px" }}>{errorMessage}</span>
+          )}
+          {successMessage && (
+            <span style={{ color: "green", marginBottom: "15px" }}>{successMessage}</span>
           )}
           <Form.Item
-            name="name"
+            name="nom"
             label="Nom"
             rules={[{ required: true, message: 'Veuillez entrer le nom de l’utilisateur' }]}
           >
             <Input placeholder="Nom de l'utilisateur" />
+          </Form.Item>
+          <Form.Item
+            name="prénom"
+            label="Prénom"
+            rules={[{ required: true, message: 'Veuillez entrer le prénom de l’utilisateur' }]}
+          >
+            <Input placeholder="Prénom de l'utilisateur" />
           </Form.Item>
           <Form.Item
             name="email"
@@ -98,29 +136,23 @@ const CreateUserModal = ({ visible, onCreate, onCancel, theme, contentURL }) => 
             <Input placeholder="Email de l'utilisateur" />
           </Form.Item>
           <Form.Item
+            name="password"
+            label="Mot de passe"
+            rules={[{ required: true, message: 'Veuillez entrer le mot de passe' }]}
+          >
+            <Input.Password placeholder="Mot de passe" />
+          </Form.Item>
+          <Form.Item
             name="role"
             label="Rôle"
             rules={[{ required: true, message: 'Veuillez sélectionner un rôle' }]}
           >
-            <Select>
-              <Option value="admin">Administrateur</Option>
-              <Option value="user">Ambassadeur</Option>
-              <Option value="user">Team Leader</Option>
-              <Option value="user">Membre</Option>
-
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="teams"
-            label="Equipe"
-            rules={[{ required: true, message: 'Veuillez sélectionner une équipe' }]}
-          >
-            <Select>
-              {teamsList.map((team, index) => {
-                return (
-                  <option key={index} value={team.id}>{team.team_name}</option>
-                )
-              })}
+            <Select placeholder="Sélectionner un rôle">
+              {roles.map((role) => (
+                <Option key={role.value} value={role.value}>
+                  {role.label}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
           <Form.Item
@@ -134,7 +166,7 @@ const CreateUserModal = ({ visible, onCreate, onCancel, theme, contentURL }) => 
             </Select>
           </Form.Item>
         </Form>
-      </div>
+      )}
     </Modal>
   );
 };

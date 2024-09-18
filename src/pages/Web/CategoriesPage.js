@@ -99,6 +99,7 @@ const CategoriesPage = () => {
               console.log(category.image); // Vérifie si l'URL est bien définie
               return (
                 <Grid item xs={12} sm={6} md={3} key={category.id}>
+                <a href={`/mes-catégories/${category.id}/details`} style={{textDecoration: "none"}}>
                 <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} className='coursesCard'>
                   <CardMedia
                     component="img"
@@ -121,6 +122,7 @@ const CategoriesPage = () => {
                     </Typography>
                   </CardContent>
                 </Card>
+                </a>
               </Grid>
               )
             }

@@ -5,7 +5,7 @@ import { BASE_URL, COURS_API, createWithImageConfig, requestsConfig } from "../A
 export const ListAllLessons= async () => {
     
     try {
-        const response = await axios.get(`${BASE_URL}/${COURS_API}/leçons`, requestsConfig);
+        const response = await axios.get(`${BASE_URL}/${COURS_API}/leçons`);
         console.log(response.data);
         return response.data;
     } catch (error) {
@@ -23,7 +23,7 @@ export const ListAllLessons= async () => {
 export const ListLessonsByID = async (id) => {
 
     try {
-        const response = await axios.get(`${BASE_URL}/${COURS_API}/leçons/${id}`, requestsConfig);
+        const response = await axios.get(`${BASE_URL}/${COURS_API}/leçons/${id}`);
         return response.data;
     } catch (error) {
         const status = error.response?.status;
@@ -38,7 +38,7 @@ export const ListLessonsByID = async (id) => {
 // @List Lessons By Chapter ID
 export const ListLessonsByChapterID = async (chapitreID) => {
     try {
-        const response = await axios.get(`${BASE_URL}/${COURS_API}/chapitres/${chapitreID}/`, requestsConfig);
+        const response = await axios.get(`${BASE_URL}/${COURS_API}/chapitres/${chapitreID}/`);
         return response.data.leçons || []; // Retourne les leçons, ou un tableau vide si absent
     } catch (error) {
         const status = error.response?.status;

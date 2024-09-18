@@ -1,4 +1,4 @@
-import { Dashboard, UsersAdminPage, CoursAdminPage, CoursDetailsAdminPage, HomePage, ForumPage, CoursesPage, CategoriesPage } from "../pages";
+import { UserProfilePage, Dashboard, UsersAdminPage, CoursAdminPage, CoursDetailsAdminPage, HomePage, ForumPage, CoursesPage, CategoriesPage } from "../pages";
 
 const routes = [
     {
@@ -40,6 +40,11 @@ const routes = [
     {
         path: '/mes-catégories',
         component: CategoriesPage,
+        layout: 'web',
+    },
+    {
+        path: '/profil/dashboard',
+        component: UserProfilePage,
         layout: 'web',
     },
     {
