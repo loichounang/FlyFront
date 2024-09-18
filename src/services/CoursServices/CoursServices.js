@@ -26,6 +26,7 @@ export const ListAllCours = async () => {
                     titre: course.titre,
                     description: course.description,
                     auteur: AuthorDetails ? AuthorDetails.nom + " " + AuthorDetails.prénom : "Auteur inconnu",
+                    auteur_id: AuthorDetails.id,
                     durée: course.duree,
                     category: categoriesDetails ? categoriesDetails.name : " Catégorie Inconnue",
                     categorieDescription: categoriesDetails ? categoriesDetails.description : "Aucune description pour le moment",

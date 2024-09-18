@@ -266,7 +266,7 @@ const CourseDetail = () => {
                                     {courseData.description}
                                 </Typography>
                                 <Typography variant="body1">
-                                    Créé par <a href="/profile/author/:authorId/profil" style={{color: "lightblue"}}>{courseData.auteur}</a>
+                                    Créé par <a href={`/profile/author/${courseData.auteu_id}/profil`} style={{color: "lightblue"}}>{courseData.auteur}</a>
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
   <Rating

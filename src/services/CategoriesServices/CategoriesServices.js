@@ -120,3 +120,14 @@ export const DeleteCategoriesAPI = async (CategoriesId) => {
         throw error; // Rethrow error to handle it in the calling function
     }
 };
+
+// @List Cours By Category
+export const ListCoursesByCategoryId = async (categoryId) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/${COURS_API}/courses-by-category?category_id=${categoryId}`);
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la récupération des cours par catégorie:", error);
+        throw error;
+    }
+};

@@ -7,7 +7,7 @@ import { Spinner } from 'react-bootstrap';
 import { submitRating } from '../../services/RatingServices/RatingServices';
 import useNotification from '../../components/common/UseNotification';
 import "../../assets/styles/CoursesCard.css";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const CoursesPage = () => {
   const navigate = useNavigate();
@@ -118,13 +118,14 @@ const CoursesPage = () => {
           <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
             <SearchIcon />
           </IconButton>
+          
         </Paper>
         <Grid container spacing={4}>
           {loading ? <Spinner /> : (
             courses.map((course) => {
               return (
                 <Grid item xs={12} sm={6} md={3} key={course.id}>
-                  <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} className='coursesCard'>
+                  <Card onClick={() => handleViewDetails(course.id)} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} className='coursesCard'>
                     <CardMedia
                       component="img"
                       height="140"
@@ -162,9 +163,6 @@ const CoursesPage = () => {
                         onClick={() => handleRatingChange(course.id, rating[course.id])} // Correctly call handleRatingChange
                       />
                       <br />
-                      <Button style={{float: "right"}} onClick={() => handleViewDetails(course.id)}>
-                        Voir le contenu
-                      </Button>
                     </CardContent>
                   </Card>
                 </Grid>

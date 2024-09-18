@@ -1,4 +1,6 @@
 import { UserProfilePage, Dashboard, UsersAdminPage, CoursAdminPage, CoursDetailsAdminPage, HomePage, ForumPage, CoursesPage, CategoriesPage } from "../pages";
+import CategoryDetail from "../components/admin/details/CategoryDetails";
+import NotFound from "../components/common/NotFound";
 
 const routes = [
     {
@@ -28,6 +30,11 @@ const routes = [
         layout: 'web',
     },
     {
+        path: '/mes-catégories/:categoryId/details',
+        component: CategoryDetail,
+        layout: 'web',
+    },
+    {
         path: '/',
         component: HomePage,
         layout: 'web',
@@ -51,6 +58,16 @@ const routes = [
         path: '/forum',
         component: ForumPage,
         layout: 'web',
+    },
+    {
+        path: '*',
+        component: NotFound,
+        layout: 'web',
+    },
+    {
+        path: '/admin/*',
+        component: NotFound,
+        layout: 'admin',
     },
 ];
 
