@@ -55,7 +55,7 @@ export const ListAllAdministrators = async (id) => {
 export const ListUsersRoles = async () => {
 
     try {
-        const response = await axios.get(`${BASE_URL}/${USERS_API}/roles/list_roles`, requestsConfig);
+        const response = await axios.get(`${BASE_URL}/${USERS_API}/roles/list_roles`);
         return response.data;
     } catch (error) {
         const status = error.response?.status;

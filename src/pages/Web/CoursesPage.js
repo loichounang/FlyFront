@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Card, CardMedia, CardContent, Rating, InputBase, Paper, IconButton, Button } from '@mui/material';
+import { Box, Typography, Grid, Card, CardMedia, CardContent, Rating, InputBase, Paper, IconButton } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 import courImage from '../../assets/images/cour.png'; // Import de l'image
 import { ListAllCours } from '../../services/CoursServices/CoursServices';
@@ -7,7 +7,7 @@ import { Spinner } from 'react-bootstrap';
 import { submitRating } from '../../services/RatingServices/RatingServices';
 import useNotification from '../../components/common/UseNotification';
 import "../../assets/styles/CoursesCard.css";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const CoursesPage = () => {
   const navigate = useNavigate();
